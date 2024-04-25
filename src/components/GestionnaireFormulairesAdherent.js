@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import {useState} from "react"
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import RechercheAdherent from './RechercheAdherent'
 import FormulaireAdherent from './FormulaireAdherent'
 import FormulaireResponsable from './FormulaireResponsable'
@@ -7,54 +8,108 @@ import FormulaireCotisation from './FormulaireCotisation'
 import FormulaireFin from './FormulaireFin'
 
 const GestionnaireFormulairesAdherent = () => {
-    const [etape, setEtape] = useState(1)
+    const navigate = useNavigate()
+
     const [donnees, setDonnees] = useState({
-        idAdherent : null, // Permet de savoir si l'adhérent est récupéré du Dolibarr
+        idAdherent: null,
+        isAdherentMajeur: null,
         recherche: {},
         adherent: {},
-        responsable: {},
+        responsables: [],
         etatSante: {},
         cotisation: {},
-        fin: {}
+        fin: {},
     })
 
     const handleSuivant = (data) => {
         setDonnees({ ...donnees, ...data })
-        setEtape(etape + 1)
+        navigate(nextRoute())
     }
 
     const handlePrecedent = () => {
-        setEtape(etape - 1)
+        navigate(prevRoute())
     }
 
-    const renderFormulaire = () => {
-        console.log(donnees)
-        switch (etape) {
-            case 1:
-                return <RechercheAdherent onSuivant={handleSuivant} />
-            case 2:
-                return <FormulaireAdherent
-                    donnees = {donnees}
-                    onSuivant={handleSuivant}
-                    onPrecedent={handlePrecedent} />
-            case 3:
-                return <FormulaireResponsable onSuivant={handleSuivant} onPrecedent={handlePrecedent} />
-            case 4:
-                return <FormulaireEtatSante onSuivant={handleSuivant} onPrecedent={handlePrecedent} />
-            case 5:
-                return <FormulaireCotisation onSuivant={handleSuivant} onPrecedent={handlePrecedent} />
-            case 6:
-                return <FormulaireFin donnees={donnees} onPrecedent={handlePrecedent} />
-            default:
-                return null;
+    const nextRoute = () => {
+        let steps = [
+            '/nouvelAdherent',
+            '/nouvelAdherent/adherent',
+            '/nouvelAdherent/responsable',
+            '/nouvelAdherent/etat-sante',
+            '/nouvelAdherent/cotisation',
+            '/nouvelAdherent/fin',
+        ]
+
+        if(donnees.isAdherentMajeur){
+            steps = [
+                '/nouvelAdherent',
+                '/nouvelAdherent/adherent',
+                '/nouvelAdherent/etat-sante',
+                '/nouvelAdherent/cotisation',
+                '/nouvelAdherent/fin',
+            ]
         }
-    };
+
+        const currentStep = steps.indexOf(window.location.pathname)
+        return currentStep < steps.length - 1 ? steps[currentStep + 1] : '/'
+    }
+
+    const prevRoute = () => {
+        let steps = [
+            '/nouvelAdherent',
+            '/nouvelAdherent/adherent',
+            '/nouvelAdherent/responsable',
+            '/nouvelAdherent/etat-sante',
+            '/nouvelAdherent/cotisation',
+            '/nouvelAdherent/fin',
+        ]
+
+        if(!donnees.isAdherentMajeur){
+            steps = [
+                '/nouvelAdherent',
+                '/nouvelAdherent/adherent',
+                '/nouvelAdherent/etat-sante',
+                '/nouvelAdherent/cotisation',
+                '/nouvelAdherent/fin',
+            ]
+        }
+        const currentStep = steps.indexOf(window.location.pathname)
+        return currentStep > 0 ? steps[currentStep - 1] : '/'
+    }
 
     return (
         <div>
-            {renderFormulaire()}
+            {console.log(donnees)}
+            <Routes> {/* Routes secondaires */}
+                <Route path="/"
+                       element={<RechercheAdherent
+                           donneesRecherche={donnees.recherche}
+                           onSuivant={handleSuivant} />} />
+                <Route path="adherent"
+                       element={<FormulaireAdherent
+                           donnees={donnees}
+                           onSuivant={handleSuivant}
+                           onPrecedent={handlePrecedent} />} />
+                <Route path="responsable"
+                       element={<FormulaireResponsable
+                           donnees={donnees}
+                           onSuivant={handleSuivant}
+                           onPrecedent={handlePrecedent} />} />
+                <Route path="etat-sante"
+                       element={<FormulaireEtatSante
+                           onSuivant={handleSuivant}
+                           onPrecedent={handlePrecedent} />} />
+                <Route path="cotisation"
+                       element={<FormulaireCotisation
+                           onSuivant={handleSuivant}
+                           onPrecedent={handlePrecedent} />} />
+                <Route path="fin"
+                       element={<FormulaireFin
+                           donnees={donnees}
+                           onPrecedent={handlePrecedent} />} />
+            </Routes>
         </div>
-    );
+    )
 }
 
 export default GestionnaireFormulairesAdherent

@@ -9,7 +9,8 @@ const ExampleComponent = () => {
         const fetchData = async () => {
             try {
                 const response = await api.callAPI('GET', 'thirdparties')
-                setAPIResponse(response);
+                const data = await  response.json()
+                setAPIResponse(data)
             } catch (error) {
                 console.error('Error fetching data:', error)
             }

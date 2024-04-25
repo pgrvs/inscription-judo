@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import ConnexionAPI from "../API/ConnexionAPI"
-import {Link} from "react-router-dom";
+import Navigation from './Navigation'
 
-const RechercheAdherent = ({ onSuivant }) => {
+const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
     const [nom, setNom] = useState('')
     const [prenom, setPrenom] = useState('')
     const [numeroLicence, setNumeroLicence] = useState('')
@@ -17,6 +17,14 @@ const RechercheAdherent = ({ onSuivant }) => {
             setResultats([])
         }
     }, [nom, prenom, numeroLicence])
+
+    useEffect(() => {
+        if (Object.keys(donneesRecherche).length !== 0) {
+            setPrenom(donneesRecherche.prenom)
+            setNom(donneesRecherche.nom)
+            setNumeroLicence(donneesRecherche.numeroLicence)
+        }
+    }, [donneesRecherche])
 
     const handleChangeNom = (e) => {
         setNom(e.target.value)
@@ -33,7 +41,7 @@ const RechercheAdherent = ({ onSuivant }) => {
     const rechercheAdherents = async () => {
         setLoading(true)
 
-        let filter = `sqlfilters=(t.nom:like:'%${prenom}% %${nom}%')`
+        let filter = `sqlfilters=(t.nom:like:'%${prenom}%${nom}%')`
 
         if (numeroLicence) {
             filter = `sqlfilters=(ef.numroadhrent:like:'${numeroLicence}%')`
@@ -66,8 +74,10 @@ const RechercheAdherent = ({ onSuivant }) => {
         let idAdherent = null
 
         const convertTimestampToDate = (timestamp) => {
-            const date = new Date(timestamp * 1000)
-            return date.toISOString().split('T')[0]
+            if (timestamp){
+                const date = new Date(timestamp * 1000)
+                return date.toISOString().split('T')[0]
+            }
         }
 
         if (adherent){
@@ -92,7 +102,11 @@ const RechercheAdherent = ({ onSuivant }) => {
 
     return (
         <div>
-            <button><Link to="/">Accueil</Link></button>
+            <Navigation
+                partieActuelle={1}
+                afficherPartie={1}
+                lienVersPagePrecedente={'/'}
+            />
             <h2>Recherche Adhérent</h2>
             <input
                 type="text"

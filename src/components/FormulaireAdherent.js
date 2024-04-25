@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react'
+import Navigation from "./Navigation"
 
 const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
     const [partieAffichee, setPartieAffichee] = useState(1)
@@ -30,73 +31,20 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
         genre: ''
     })
 
-    const validerPartie = (partie) => {
-        // Vérifications pour chaque champ en fonction de la partie
-        const erreurs = {}
-
-        if (partie === 1) {
-            if (!adherentData.nom) {
-                erreurs.nom = 'Le nom est obligatoire'
-            }
-            if (!adherentData.prenom) {
-                erreurs.prenom = 'Le prénom est obligatoire'
-            }
-            if (!adherentData.dateDeNaissance) {
-                erreurs.dateDeNaissance = 'La date de naissance est obligatoire'
-            }
-        }
-
-        if (partie === 2) {
-            if (!adherentData.rue) {
-                erreurs.rue = 'La rue est obligatoire'
-            }
-            if (!adherentData.codePostal) {
-                erreurs.codePostal = 'Le code postal est obligatoire'
-            }
-            if (!adherentData.ville) {
-                erreurs.ville = 'La ville est obligatoire'
-            }
-        }
-
-        if (partie === 3) {
-            if (!adherentData.numeroTelephone || !/[0-9]{10}/.test(adherentData.numeroTelephone)) {
-                erreurs.numeroTelephone = 'Le numéro de téléphone est obligatoire et doit être valide'
-            }
-            if (!adherentData.adresseEmail || !/\S+@\S+\.\S+/.test(adherentData.adresseEmail)) {
-                erreurs.adresseEmail = 'L\'adresse email est obligatoire et doit être valide'
-            }
-        }
-
-        if (partie === 4) {
-            if (!adherentData.couleurCeinture) {
-                erreurs.couleurCeinture = 'La couleur de ceinture est obligatoire'
-            }
-            if (!adherentData.poids) {
-                erreurs.poids = 'Le poids est obligatoire'
-            }
-            if (!adherentData.genre) {
-                erreurs.genre = 'Le genre est obligatoire'
-            }
-        }
-
-        setErreurs(erreurs);
-        return Object.keys(erreurs).length === 0 // Renvoie true si pas d'erreurs
-    };
-
     useEffect(() => {
-        if (donnees.adherent) {
+        if (donnees.idAdherent) {
             setAdherentData({
-                nom: donnees.adherent.nom,
-                prenom: donnees.adherent.prenom,
-                dateDeNaissance: donnees.adherent.dateDeNaissance,
-                rue: donnees.adherent.rue,
-                codePostal: donnees.adherent.codePostal,
-                ville: donnees.adherent.ville,
-                numeroTelephone: donnees.adherent.numeroTelephone,
-                adresseEmail: donnees.adherent.adresseEmail,
-                couleurCeinture: donnees.adherent.couleurCeinture,
-                poids: donnees.adherent.poids,
-                genre: donnees.adherent.genre
+                nom: donnees.adherent.nom || '',
+                prenom: donnees.adherent.prenom || '',
+                dateDeNaissance: donnees.adherent.dateDeNaissance || '',
+                rue: donnees.adherent.rue || '',
+                codePostal: donnees.adherent.codePostal || '',
+                ville: donnees.adherent.ville || '',
+                numeroTelephone: donnees.adherent.numeroTelephone || '',
+                adresseEmail: donnees.adherent.adresseEmail || '',
+                couleurCeinture: donnees.adherent.couleurCeinture || '',
+                poids: donnees.adherent.poids || '',
+                genre: donnees.adherent.genre || ''
             })
         } else {
             setAdherentData({
@@ -115,12 +63,6 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
         }
     }
 
-    const handleClickSuivant = () => {
-        if (validerPartie(partieAffichee)) {
-            onSuivant( {adherent: adherentData});
-        }
-    }
-
     const afficherPartie = (partie) => {
         if (partie < partieAffichee){
             setPartieAffichee(partie)
@@ -130,8 +72,95 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
         }
     }
 
+    const handleClickSuivant = () => {
+        if (validerPartie(partieAffichee)) {
+            const isAdherentMajeur = () => {
+                if (adherentData.dateDeNaissance) {
+                    const dateNaissance = new Date(adherentData.dateDeNaissance);
+                    const today = new Date();
+                    const age = today.getFullYear() - dateNaissance.getFullYear();
+
+                    return age >= 18
+                }
+                return false;
+            };
+
+            onSuivant( {adherent: adherentData, isAdherentMajeur: isAdherentMajeur()})
+        }
+    }
+
+    const validerPartie = (partie) => {
+        // Vérifications pour chaque champ en fonction de la partie
+        const erreurs = {}
+
+        if (partie === 1) {
+            if (!adherentData.nom) {
+                erreurs.nom = 'Le nom est obligatoire'
+            }
+            if (!adherentData.prenom && donnees.idAdherent == null) {
+                erreurs.prenom = 'Le prénom est obligatoire'
+            }
+            if (!adherentData.dateDeNaissance) {
+                erreurs.dateDeNaissance = 'La date de naissance est obligatoire'
+            }
+        }
+
+        if (partie === 2) {
+            if (!adherentData.rue) {
+                erreurs.rue = 'La rue est obligatoire'
+            }
+            if (!/[0-9]{5}/.test(adherentData.codePostal)) {
+                erreurs.codePostal = 'Le code postal doit être valide'
+            }
+            if (!adherentData.codePostal) {
+                erreurs.codePostal = 'Le code postal est obligatoire'
+            }
+            if (!adherentData.ville) {
+                erreurs.ville = 'La ville est obligatoire'
+            }
+        }
+
+        if (partie === 3) {
+            if (!/[0-9]{10}/.test(adherentData.numeroTelephone)) {
+                erreurs.numeroTelephone = 'Le numéro de téléphone doit être valide'
+            }
+            if (!adherentData.numeroTelephone) {
+                erreurs.numeroTelephone = 'Le numéro de téléphone est obligatoire'
+            }
+            if (!/\S+@\S+\.\S+/.test(adherentData.adresseEmail)) {
+                erreurs.adresseEmail = 'L\'adresse email doit être valide'
+            }
+            if (!adherentData.adresseEmail) {
+                erreurs.adresseEmail = 'L\'adresse email est obligatoire'
+            }
+        }
+
+        if (partie === 4) {
+            if (!adherentData.couleurCeinture) {
+                erreurs.couleurCeinture = 'La couleur de ceinture est obligatoire'
+            }
+            if (!/[0-9]/.test(adherentData.poids)) {
+                erreurs.poids = 'Le poids doit être valide'
+            }
+            if (!adherentData.poids) {
+                erreurs.poids = 'Le poids est obligatoire'
+            }
+            if (!adherentData.genre) {
+                erreurs.genre = 'Le genre est obligatoire'
+            }
+        }
+
+        setErreurs(erreurs);
+        return Object.keys(erreurs).length === 0 // Renvoie true si pas d'erreurs
+    }
+
     return (
         <div>
+            <Navigation
+                partieActuelle={partieAffichee}
+                afficherPartie={afficherPartie}
+                lienVersPagePrecedente={'/nouvelAdherent'}
+            />
             {partieAffichee === 1 && (
                 <fieldset>
                     <legend>Informations personnelles</legend>
@@ -206,17 +235,21 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
                         Couleur de ceinture:
                         <input type="text" name="couleurCeinture" value={adherentData.couleurCeinture}
                                onChange={handleChange}/>
+                        {erreurs.couleurCeinture && <span style={{ color: 'red' }}>{erreurs.couleurCeinture}</span>}
                     </label>
                     <label>
                         Poids:
                         <input type="text" name="poids" value={adherentData.poids} onChange={handleChange}/>
+                        {erreurs.poids && <span style={{ color: 'red' }}>{erreurs.poids}</span>}
                     </label>
                     <label>
                         Genre:
                         <select name="genre" value={adherentData.genre} onChange={handleChange}>
+                            <option value={null} >Selectionné un genre</option>
                             <option value="1">Masculin</option>
                             <option value="2">Féminin</option>
                         </select>
+                        {erreurs.genre && <span style={{ color: 'red' }}>{erreurs.genre}</span>}
                     </label>
                     <button type="button" onClick={() => afficherPartie(3)}>Précédent</button>
                     <button type="button" onClick={() => handleClickSuivant()}>Enregistrer</button>
