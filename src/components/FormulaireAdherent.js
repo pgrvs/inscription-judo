@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react'
+import {capitalize, isAdherentMajeur, validatePhoneNumber, validateEmail, validateCodePostal} from "../common/utils"
 import Navigation from "./Navigation"
 
 const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
@@ -55,11 +56,21 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
         }
     }, [donnees])
 
+    const handleChangeNom = (e) => {
+        const upperCaseNom = e.target.value.toUpperCase()
+        setAdherentData({ ...adherentData, nom: upperCaseNom })
+    }
+
+    const handleChangePrenom = (e) => {
+        setAdherentData({ ...adherentData, prenom: capitalize(e.target.value) })
+    }
+
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value } = e.target
         setAdherentData({ ...adherentData, [name]: value })
         if (erreurs[name]) {
-            setErreurs({ ...erreurs, [name]: '' }) // Efface l'erreur pour ce champ si valide
+            // Efface l'erreur pour ce champ si valide
+            setErreurs({ ...erreurs, [name]: '' })
         }
     }
 
@@ -74,18 +85,7 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
 
     const handleClickSuivant = () => {
         if (validerPartie(partieAffichee)) {
-            const isAdherentMajeur = () => {
-                if (adherentData.dateDeNaissance) {
-                    const dateNaissance = new Date(adherentData.dateDeNaissance);
-                    const today = new Date();
-                    const age = today.getFullYear() - dateNaissance.getFullYear();
-
-                    return age >= 18
-                }
-                return false;
-            };
-
-            onSuivant( {adherent: adherentData, isAdherentMajeur: isAdherentMajeur()})
+            onSuivant( {adherent: adherentData, isAdherentMajeur: isAdherentMajeur(adherentData.dateDeNaissance)})
         }
     }
 
@@ -109,29 +109,20 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
             if (!adherentData.rue) {
                 erreurs.rue = 'La rue est obligatoire'
             }
-            if (!/[0-9]{5}/.test(adherentData.codePostal)) {
-                erreurs.codePostal = 'Le code postal doit être valide'
-            }
-            if (!adherentData.codePostal) {
-                erreurs.codePostal = 'Le code postal est obligatoire'
-            }
-            if (!adherentData.ville) {
-                erreurs.ville = 'La ville est obligatoire'
+            const codePostalError = validateCodePostal(adherentData.codePostal)
+            if (codePostalError) {
+                erreurs.ville = codePostalError
             }
         }
 
         if (partie === 3) {
-            if (!/[0-9]{10}/.test(adherentData.numeroTelephone)) {
-                erreurs.numeroTelephone = 'Le numéro de téléphone doit être valide'
+            const telephoneError = validatePhoneNumber(adherentData.numeroTelephone)
+            if (telephoneError) {
+                erreurs.numeroTelephone = telephoneError
             }
-            if (!adherentData.numeroTelephone) {
-                erreurs.numeroTelephone = 'Le numéro de téléphone est obligatoire'
-            }
-            if (!/\S+@\S+\.\S+/.test(adherentData.adresseEmail)) {
-                erreurs.adresseEmail = 'L\'adresse email doit être valide'
-            }
-            if (!adherentData.adresseEmail) {
-                erreurs.adresseEmail = 'L\'adresse email est obligatoire'
+            const emailError = validateEmail(adherentData.adresseEmail)
+            if (emailError) {
+                erreurs.adresseEmail = emailError
             }
         }
 
@@ -149,9 +140,9 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
                 erreurs.genre = 'Le genre est obligatoire'
             }
         }
-
-        setErreurs(erreurs);
-        return Object.keys(erreurs).length === 0 // Renvoie true si pas d'erreurs
+        setErreurs(erreurs)
+        // Renvoie true si pas d'erreurs
+        return Object.keys(erreurs).length === 0
     }
 
     return (
@@ -165,16 +156,25 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
                 <fieldset>
                     <legend>Informations personnelles</legend>
                     <label>
-                        { donnees.idAdherent ?
-                           "Prénom Nom :" : "Nom :"
-                        }
-                        <input type="text" name="nom" value={adherentData.nom} onChange={handleChange}/>
-                        {erreurs.nom && <span style={{ color: 'red' }}>{erreurs.nom}</span>}
+                        { donnees.idAdherent
+                            ? (
+                                <>
+                                    Prénom Nom :
+                                    <input type="text" name="nom" value={adherentData.nom} onChange={handleChange}/>
+                                    {erreurs.nom && <span style={{ color: 'red' }}>{erreurs.nom}</span>}
+                                </>
+                            ) : (
+                                <>
+                                    Nom :
+                                    <input type="text" name="nom" value={adherentData.nom} onChange={handleChangeNom}/>
+                                    {erreurs.nom && <span style={{ color: 'red' }}>{erreurs.nom}</span>}
+                                </>
+                        )}
                     </label>
                     { (!donnees.idAdherent) &&
                     <label>
                         Prénom:
-                        <input type="text" name="prenom" value={adherentData.prenom} onChange={handleChange} />
+                        <input type="text" name="prenom" value={adherentData.prenom} onChange={handleChangePrenom}/>
                         {erreurs.prenom && <span style={{ color: 'red' }}>{erreurs.prenom}</span>}
                     </label>
                     }

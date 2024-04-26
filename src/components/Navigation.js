@@ -11,10 +11,8 @@ const Navigation = ({ partieActuelle, afficherPartie, lienVersPagePrecedente }) 
 
     const handleRetour = () => {
         if (partieActuelle === 1) {
-            // Si on est à la première partie, rediriger vers la page précédente donnée par la prop
             navigate(lienVersPagePrecedente)
         } else {
-            // Sinon, afficher la partie précédente
             afficherPartie(partieActuelle - 1)
         }
     }

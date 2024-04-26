@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import Navigation from './Navigation';
+import React, {useState} from 'react'
+import {capitalize, validatePhoneNumber, validateEmail, validateCodePostal} from "../common/utils"
+import Navigation from './Navigation'
 
 const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
     const [indexResponsableActif, setIndexResponsableActif] = useState(0)
@@ -8,7 +9,6 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
         {
             nom: '',
             prenom: '',
-            memeAdressePostalAdherent: false,
             rue: '',
             codePostal: '',
             ville: '',
@@ -57,26 +57,28 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
     const responsableActif = responsables[indexResponsableActif]
 
     const handleChange = (e) => {
-        const { name, value, checked, type } = e.target
+        const { name, value, checked } = e.target
         const updatedResponsables = [...responsables]
         if (name.includes('factures') || name.includes('legales')  || name.includes('sportives') ) {
             updatedResponsables[indexResponsableActif].informations[name] = checked
-        } else if (name.includes('memeAdressePostalAdherent')) {
-            updatedResponsables[indexResponsableActif].memeAdressePostalAdherent = checked
-            if (updatedResponsables[indexResponsableActif].memeAdressePostalAdherent){
-                updatedResponsables[indexResponsableActif].rue = donnees.adherent.rue
-                updatedResponsables[indexResponsableActif].codePostal = donnees.adherent.codePostal
-                updatedResponsables[indexResponsableActif].ville = donnees.adherent.ville
-            }
-        } else if (name.includes('numeroTelephone')) {
+        }
+        else if (name.includes('numeroTelephone')) {
             const telephoneIndex = parseInt(name.split('_')[1])
             updatedResponsables[indexResponsableActif].numeroTelephone[telephoneIndex] = value
-        } else {
+        }
+        else if (name.includes('prenom')) {
+            updatedResponsables[indexResponsableActif].prenom = capitalize(e.target.value)
+        }
+        else if (name.includes('nom')) {
+            updatedResponsables[indexResponsableActif].nom = e.target.value.toUpperCase()
+        }
+        else {
             updatedResponsables[indexResponsableActif][name] = value
         }
         setResponsables(updatedResponsables)
         if (erreurs[name]) {
-            setErreurs({ ...erreurs, [name]: '' }) // Efface l'erreur pour ce champ si valide
+            // Efface l'erreur pour ce champ si valide
+            setErreurs({ ...erreurs, [name]: '' })
         }
     }
 
@@ -109,11 +111,9 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
             if (!responsableActif.rue) {
                 erreurs.rue = 'La rue est obligatoire'
             }
-            if (!/[0-9]{5}/.test(responsableActif.codePostal)) {
-                erreurs.codePostal = 'Le code postal doit être valide'
-            }
-            if (!responsableActif.codePostal) {
-                erreurs.codePostal = 'Le code postal est obligatoire'
+            const codePostalError = validateCodePostal(responsableActif.codePostal)
+            if (codePostalError) {
+                erreurs.codePostal = codePostalError
             }
             if (!responsableActif.ville) {
                 erreurs.ville = 'La ville est obligatoire'
@@ -121,27 +121,23 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
         }
 
         if (partie === 3) {
-            if (!/[0-9]{10}/.test(responsableActif.numeroTelephone[0])) {
-                erreurs.numeroTelephone1 = 'Le numéro de téléphone doit être valide'
-            }
-            if (!responsableActif.numeroTelephone[0]) {
-                erreurs.numeroTelephone1 = 'Le numéro de téléphone est obligatoire'
+            const numeroTelephoneError = validatePhoneNumber(responsableActif.numeroTelephone[0])
+            if (numeroTelephoneError) {
+                erreurs.numeroTelephone1 = numeroTelephoneError
             }
             if (responsableActif.numeroTelephone[1]) {
                 if (!/[0-9]{10}/.test(responsableActif.numeroTelephone[1])) {
                     erreurs.numeroTelephone2 = 'Le numéro de téléphone doit être valide'
                 }
             }
-            if (!/\S+@\S+\.\S+/.test(responsableActif.adresseEmail)) {
-                erreurs.adresseEmail = 'L\'adresse email doit être valide'
-            }
-            if (!responsableActif.adresseEmail) {
-                erreurs.adresseEmail = 'L\'adresse email est obligatoire'
+            const emailError = validateEmail(responsableActif.adresseEmail)
+            if (emailError) {
+                erreurs.adresseEmail = emailError
             }
         }
-
         setErreurs(erreurs)
-        return Object.keys(erreurs).length === 0 // Renvoie true si pas d'erreurs
+        // Renvoie true si pas d'erreurs
+        return Object.keys(erreurs).length === 0
     }
 
     return (
@@ -163,11 +159,6 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
                         Prénom:
                         <input type="text" name="prenom" value={responsableActif.prenom} onChange={handleChange}/>
                         {erreurs.prenom && <span style={{ color: 'red' }}>{erreurs.prenom}</span>}
-                    </label>
-                    <label>
-                        <input type="checkbox" name="memeAdressePostalAdherent" checked={responsableActif.memeAdressePostalAdherent}
-                               onChange={handleChange}/>
-                        Même adresse postal que l'adhérent
                     </label>
                     <button type="button" onClick={() => afficherPartie(2)}>Suivant</button>
                 </fieldset>

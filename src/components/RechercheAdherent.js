@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import ConnexionAPI from "../API/ConnexionAPI"
+import {rechercheAdherents, getResponsablesByIdAdherent} from "../API/RequetesAPI"
 import Navigation from './Navigation'
+import {convertTimestampToDate, capitalize} from "../common/utils"
 
 const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
     const [nom, setNom] = useState('')
@@ -8,15 +9,27 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
     const [numeroLicence, setNumeroLicence] = useState('')
     const [resultats, setResultats] = useState([])
     const [loading, setLoading] = useState(false)
-    const api = new ConnexionAPI()
 
     useEffect(() => {
-        if (nom || prenom || numeroLicence) {
-            rechercheAdherents()
-        } else {
-            setResultats([])
+        const fetcheData = async () => {
+            setLoading(true)
+
+            let results = [];
+
+            if (nom || prenom || numeroLicence) {
+                try {
+                    results = await rechercheAdherents(prenom, nom, numeroLicence)
+                } catch (error) {
+                    console.error("Erreur lors de la recherche des adhérents:", error)
+                }
+            }
+            setResultats(results)
+            setLoading(false)
         }
+        fetcheData()
+
     }, [nom, prenom, numeroLicence])
+
 
     useEffect(() => {
         if (Object.keys(donneesRecherche).length !== 0) {
@@ -27,60 +40,30 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
     }, [donneesRecherche])
 
     const handleChangeNom = (e) => {
-        setNom(e.target.value)
+        const upperCaseNom = e.target.value.toUpperCase()
+        setNom(upperCaseNom)
     }
 
     const handleChangePrenom = (e) => {
-        setPrenom(e.target.value)
+        setPrenom(capitalize(e.target.value))
     }
 
     const handleChangeNumeroLicence = (e) => {
         setNumeroLicence(e.target.value)
     }
 
-    const rechercheAdherents = async () => {
-        setLoading(true)
-
-        let filter = `sqlfilters=(t.nom:like:'%${prenom}%${nom}%')`
-
-        if (numeroLicence) {
-            filter = `sqlfilters=(ef.numroadhrent:like:'${numeroLicence}%')`
-        }
-
-        try {
-            const response = await api.callAPI(
-                'GET',
-                'thirdparties',
-                filter
-            )
-
-            const data = await response.json()
-            setResultats(data)
-            setLoading(false)
-
-        } catch (error) {
-            console.error('Erreur lors de la recherche', error)
-            setLoading(false)
-        }
-    }
-
-    const handleClickSuivant = (adherent) => {
+    const handleClickSuivant = async (adherent) => {
         const recherche = {
-            'nom' : nom,
-            'prenom' : prenom,
-            'numeroLicence' : numeroLicence
+            'nom': nom,
+            'prenom': prenom,
+            'numeroLicence': numeroLicence
         }
 
         let idAdherent = null
+        let responsablesAPI = {}
+        let responsables = []
 
-        const convertTimestampToDate = (timestamp) => {
-            if (timestamp){
-                const date = new Date(timestamp * 1000)
-                return date.toISOString().split('T')[0]
-            }
-        }
-
-        if (adherent){
+        if (adherent) {
             idAdherent = adherent.id
             adherent = {
                 nom: adherent.name,
@@ -95,9 +78,27 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                 poids: adherent.array_options.options_poidsenkilogramme,
                 genre: adherent.array_options.options_genre
             }
+            responsablesAPI = await getResponsablesByIdAdherent(idAdherent)
+            responsablesAPI.forEach((responsable) => {
+                let responsableData = {}
+                responsableData = {
+                    prenom : responsable.firstname,
+                    nom : responsable.lastname,
+                    rue: responsable.address,
+                    codePostal: responsable.zip,
+                    ville: responsable.town,
+                    numeroTelephone: [responsable.phone_mobile, responsable.phone_perso],
+                    adresseEmail: responsable.mail,
+                    informations: {
+                        factures: false,
+                        legales: false,
+                        sportives: false
+                    }
+                }
+                responsables.push(responsableData)
+            })
         }
-
-        onSuivant({ idAdherent, recherche, adherent })
+        onSuivant({idAdherent, recherche, adherent, responsables})
     }
 
     return (
@@ -128,22 +129,30 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                 onChange={handleChangeNumeroLicence}
                 placeholder="Numero de licence"
             />
+            <h3>Résultats de la recherche :</h3>
 
-            {loading && <p>Recherche en cours...</p>}
-
-            {resultats.length > 0 && (
-                <div>
-                    <h3>Résultats de la recherche :</h3>
-                    <ul>
-                        {resultats.map((adherent) => (
-                            <li key={adherent.id}>
-                                {adherent.name} - {adherent.array_options.options_numroadhrent}
-                                <button onClick={() => handleClickSuivant(adherent)}>Sélectionner</button>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+            {loading
+                ? <p>Recherche en cours...</p>
+                : (
+                    <>
+                        {(resultats.length > 0 && (nom !== '' || prenom !== '')) && (
+                            <div>
+                                <ul>
+                                    {resultats.map((adherent) => (
+                                        <li key={adherent.id}>
+                                            {adherent.name} - {adherent.array_options.options_numroadhrent}
+                                            <button onClick={() => handleClickSuivant(adherent)}>Sélectionner</button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                        {(resultats.length === undefined && (nom !== '' || prenom !== '')) && (
+                            <p>Aucun adhérent trouvé au nom de {nom} {prenom}</p>
+                        )}
+                    </>
+                )
+            }
             <br/>
             <button onClick={() => handleClickSuivant(null)}>Nouvel Adhérent</button>
         </div>
