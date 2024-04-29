@@ -33,7 +33,7 @@ const GestionnaireFormulairesAdherent = () => {
     const nextRoute = () => {
         let steps = [
             '/nouvelAdherent',
-            '/nouvelAdherent/adherent',
+            '/nouvelAdherent/adherent/1',
             '/nouvelAdherent/responsable',
             '/nouvelAdherent/etat-sante',
             '/nouvelAdherent/cotisation',
@@ -43,7 +43,7 @@ const GestionnaireFormulairesAdherent = () => {
         if(donnees.isAdherentMajeur){
             steps = [
                 '/nouvelAdherent',
-                '/nouvelAdherent/adherent',
+                '/nouvelAdherent/adherent/1',
                 '/nouvelAdherent/etat-sante',
                 '/nouvelAdherent/cotisation',
                 '/nouvelAdherent/fin',
@@ -80,12 +80,12 @@ const GestionnaireFormulairesAdherent = () => {
     return (
         <div>
             {console.log(donnees)}
-            <Routes> {/* Routes secondaires */}
+            <Routes>
                 <Route path="/"
                        element={<RechercheAdherent
                            donneesRecherche={donnees.recherche}
                            onSuivant={handleSuivant} />} />
-                <Route path="adherent"
+                <Route path="adherent/:partie"
                        element={<FormulaireAdherent
                            donnees={donnees}
                            onSuivant={handleSuivant}
@@ -101,6 +101,7 @@ const GestionnaireFormulairesAdherent = () => {
                            onPrecedent={handlePrecedent} />} />
                 <Route path="cotisation"
                        element={<FormulaireCotisation
+                           donnees={donnees}
                            onSuivant={handleSuivant}
                            onPrecedent={handlePrecedent} />} />
                 <Route path="fin"

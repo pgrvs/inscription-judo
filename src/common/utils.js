@@ -1,3 +1,28 @@
+const splitName = (fullName) => {
+    const words = fullName.trim().split(' ')
+
+    let prenom = ''
+    let nom = ''
+
+    words.forEach((word) => {
+        if (word === word.toUpperCase()) {
+            if (nom) {
+                nom += ' ' + word
+            } else {
+                nom = word
+            }
+        } else {
+            if (prenom) {
+                prenom += ' ' + word
+            } else {
+                prenom = word
+            }
+        }
+    })
+    return { prenom, nom }
+}
+
+
 const convertTimestampToDate = (timestamp) => {
     if (timestamp) {
         const date = new Date(timestamp * 1000)
@@ -50,6 +75,7 @@ const validateCodePostal = (codePostal) => {
 }
 
 export {
+    splitName,
     convertTimestampToDate,
     capitalize,
     isAdherentMajeur,

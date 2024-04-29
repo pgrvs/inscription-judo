@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import {capitalize, isAdherentMajeur, validatePhoneNumber, validateEmail, validateCodePostal} from "../common/utils"
 import Navigation from "./Navigation"
+import {useParams} from "react-router-dom";
 
 const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
-    const [partieAffichee, setPartieAffichee] = useState(1)
+    const {partie} = useParams()
+    const [partieAffichee, setPartieAffichee] = useState(parseInt(partie))
     const [adherentData, setAdherentData] = useState({
         nom: '',
         prenom: '',
@@ -97,7 +99,7 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
             if (!adherentData.nom) {
                 erreurs.nom = 'Le nom est obligatoire'
             }
-            if (!adherentData.prenom && donnees.idAdherent == null) {
+            if (!adherentData.prenom) {
                 erreurs.prenom = 'Le prénom est obligatoire'
             }
             if (!adherentData.dateDeNaissance) {
@@ -156,28 +158,15 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
                 <fieldset>
                     <legend>Informations personnelles</legend>
                     <label>
-                        { donnees.idAdherent
-                            ? (
-                                <>
-                                    Prénom Nom :
-                                    <input type="text" name="nom" value={adherentData.nom} onChange={handleChange}/>
-                                    {erreurs.nom && <span style={{ color: 'red' }}>{erreurs.nom}</span>}
-                                </>
-                            ) : (
-                                <>
-                                    Nom :
-                                    <input type="text" name="nom" value={adherentData.nom} onChange={handleChangeNom}/>
-                                    {erreurs.nom && <span style={{ color: 'red' }}>{erreurs.nom}</span>}
-                                </>
-                        )}
+                        Nom :
+                        <input type="text" name="nom" value={adherentData.nom} onChange={handleChangeNom}/>
+                        {erreurs.nom && <span style={{ color: 'red' }}>{erreurs.nom}</span>}
                     </label>
-                    { (!donnees.idAdherent) &&
                     <label>
                         Prénom:
                         <input type="text" name="prenom" value={adherentData.prenom} onChange={handleChangePrenom}/>
                         {erreurs.prenom && <span style={{ color: 'red' }}>{erreurs.prenom}</span>}
                     </label>
-                    }
                     <label>
                         Date de naissance:
                         <input type="date" name="dateDeNaissance" value={adherentData.dateDeNaissance} onChange={handleChange} />

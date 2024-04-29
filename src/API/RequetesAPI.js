@@ -4,7 +4,7 @@ const rechercheAdherents = async (prenom, nom, numeroLicence) => {
     const api = new ConnexionAPI()
 
     let filter = `sqlfilters=(t.nom:like:'%${prenom}%${nom}%')`
-
+    console.log(numeroLicence)
     if (numeroLicence) {
         filter = `sqlfilters=(ef.numroadhrent:like:'${numeroLicence}%')`
     }
@@ -15,7 +15,6 @@ const rechercheAdherents = async (prenom, nom, numeroLicence) => {
             'thirdparties',
             filter
         )
-
         const data = await response.json()
         return (data)
 

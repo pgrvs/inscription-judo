@@ -1,6 +1,7 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {capitalize, validatePhoneNumber, validateEmail, validateCodePostal} from "../common/utils"
 import Navigation from './Navigation'
+import GestionnaireResponsables from "./GestionnaireResponsables"
 
 const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
     const [indexResponsableActif, setIndexResponsableActif] = useState(0)
@@ -9,9 +10,9 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
         {
             nom: '',
             prenom: '',
-            rue: '',
-            codePostal: '',
-            ville: '',
+            rue: donnees.adherent.rue,
+            codePostal: donnees.adherent.codePostal,
+            ville: donnees.adherent.ville,
             numeroTelephone: ['', ''],
             adresseEmail: '',
             informations: {
@@ -33,14 +34,19 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
         adresseEmail: ''
     })
 
+    useEffect(() => {
+        if(donnees.idAdherent){
+            setResponsables(donnees.responsables)
+        }
+    }, [donnees.idAdherent, donnees.responsables])
+
     const ajouterResponsable = () => {
         const nouveauResponsable = {
             nom: '',
             prenom: '',
-            memeAdressePostalAdherent: false,
-            rue: '',
-            codePostal: '',
-            ville: '',
+            rue: donnees.adherent.rue,
+            codePostal: donnees.adherent.codePostal,
+            ville: donnees.adherent.ville,
             numeroTelephone: ['', ''],
             adresseEmail: '',
             informations: {
@@ -51,7 +57,12 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
         }
         setResponsables([...responsables, nouveauResponsable])
         setIndexResponsableActif(responsables.length)
-        setPartieAffichee(1)
+        setPartieAffichee(2)
+    }
+
+    const formGestionnaireResponsbale = (index) => {
+        setIndexResponsableActif(index)
+        setPartieAffichee(2)
     }
 
     const responsableActif = responsables[indexResponsableActif]
@@ -98,7 +109,7 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
     const validerPartie = (partie) => {
         const erreurs = {}
 
-        if (partie === 1) {
+        if (partie === 2) {
             if (!responsableActif.nom) {
                 erreurs.nom = 'Le nom est obligatoire'
             }
@@ -107,7 +118,7 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
             }
         }
 
-        if (partie === 2) {
+        if (partie === 3) {
             if (!responsableActif.rue) {
                 erreurs.rue = 'La rue est obligatoire'
             }
@@ -120,7 +131,7 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
             }
         }
 
-        if (partie === 3) {
+        if (partie === 4) {
             const numeroTelephoneError = validatePhoneNumber(responsableActif.numeroTelephone[0])
             if (numeroTelephoneError) {
                 erreurs.numeroTelephone1 = numeroTelephoneError
@@ -145,9 +156,16 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
             <Navigation
                 partieActuelle={partieAffichee}
                 afficherPartie={afficherPartie}
-                lienVersPagePrecedente={'/nouvelAdherent/adherent'}
+                lienVersPagePrecedente={'/nouvelAdherent/adherent/4'}
             />
             {partieAffichee === 1 && (
+                <>
+                    <GestionnaireResponsables responsables={responsables} indexResponsbale={formGestionnaireResponsbale}/>
+                    <button onClick={ajouterResponsable}>Ajouter un autre responsable</button>
+                    <button type="button" onClick={handleSuivant}>Non, passé à la suite</button>
+                </>
+            )}
+            {partieAffichee === 2 && (
                 <fieldset>
                     <legend>Responsable #{indexResponsableActif + 1}</legend>
                     <label>
@@ -160,13 +178,12 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
                         <input type="text" name="prenom" value={responsableActif.prenom} onChange={handleChange}/>
                         {erreurs.prenom && <span style={{ color: 'red' }}>{erreurs.prenom}</span>}
                     </label>
-                    <button type="button" onClick={() => afficherPartie(2)}>Suivant</button>
+                    <button type="button" onClick={() => afficherPartie(3)}>Suivant</button>
                 </fieldset>
             )}
 
-            {partieAffichee === 2 && (
+            {partieAffichee === 3 && (
                 <fieldset>
-
                     <label>
                         Rue:
                         <input type="text" name="rue" value={responsableActif.rue} onChange={handleChange}/>
@@ -183,12 +200,12 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
                         <input type="text" name="ville" onChange={handleChange} value={responsableActif.ville}/>
                         {erreurs.ville && <span style={{ color: 'red' }}>{erreurs.ville}</span>}
                     </label>
-                    <button type="button" onClick={() => afficherPartie(1)}>Précédent</button>
-                    <button type="button" onClick={() => afficherPartie(3)}>Suivant</button>
+                    <button type="button" onClick={() => afficherPartie(2)}>Précédent</button>
+                    <button type="button" onClick={() => afficherPartie(4)}>Suivant</button>
                 </fieldset>
             )}
 
-            {partieAffichee === 3 && (
+            {partieAffichee === 4 && (
                 <fieldset>
                     <label>
                         Téléphone 1:
@@ -208,12 +225,12 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
                                onChange={handleChange}/>
                         {erreurs.adresseEmail && <span style={{color: 'red'}}>{erreurs.adresseEmail}</span>}
                     </label>
-                    <button type="button" onClick={() => afficherPartie(2)}>Précédent</button>
-                    <button type="button" onClick={() => afficherPartie(4)}>Suivant</button>
+                    <button type="button" onClick={() => afficherPartie(3)}>Précédent</button>
+                    <button type="button" onClick={() => afficherPartie(5)}>Suivant</button>
                 </fieldset>
             )}
 
-            {partieAffichee === 4 && (
+            {partieAffichee === 5 && (
                 <fieldset>
                     <label>
                         Informations à envoyer par email:
@@ -235,15 +252,8 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
                         Informations sportives
                     </label>
                     <br/>
-                    <button type="button" onClick={() => afficherPartie(3)}>Précédent</button>
-                    <button type="button" onClick={() => afficherPartie(5)}>Suivant</button>
-                </fieldset>
-            )}
-
-            {partieAffichee === 5 && (
-                <fieldset>
-                    <button onClick={ajouterResponsable}>Ajouter un autre responsable</button>
-                    <button type="button" onClick={handleSuivant}>Non, passé à la suite</button>
+                    <button type="button" onClick={() => afficherPartie(4)}>Précédent</button>
+                    <button type="button" onClick={() => afficherPartie(1)}>Suivant</button>
                 </fieldset>
             )}
         </div>

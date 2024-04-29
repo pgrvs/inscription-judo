@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {rechercheAdherents, getResponsablesByIdAdherent} from "../API/RequetesAPI"
 import Navigation from './Navigation'
-import {convertTimestampToDate, capitalize} from "../common/utils"
+import {splitName, convertTimestampToDate, capitalize} from "../common/utils"
 
 const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
     const [nom, setNom] = useState('')
@@ -14,7 +14,7 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
         const fetcheData = async () => {
             setLoading(true)
 
-            let results = [];
+            let results = []
 
             if (nom || prenom || numeroLicence) {
                 try {
@@ -65,9 +65,10 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
 
         if (adherent) {
             idAdherent = adherent.id
+            const {prenom, nom} = splitName(adherent.name)
             adherent = {
-                nom: adherent.name,
-                prenom: '',
+                nom: nom,
+                prenom: prenom,
                 dateDeNaissance: convertTimestampToDate(adherent.array_options.options_datedenaissance),
                 rue: adherent.address,
                 codePostal: adherent.zip,
@@ -79,24 +80,26 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                 genre: adherent.array_options.options_genre
             }
             responsablesAPI = await getResponsablesByIdAdherent(idAdherent)
-            responsablesAPI.forEach((responsable) => {
-                let responsableData = {}
-                responsableData = {
-                    prenom : responsable.firstname,
-                    nom : responsable.lastname,
-                    rue: responsable.address,
-                    codePostal: responsable.zip,
-                    ville: responsable.town,
-                    numeroTelephone: [responsable.phone_mobile, responsable.phone_perso],
-                    adresseEmail: responsable.mail,
-                    informations: {
-                        factures: false,
-                        legales: false,
-                        sportives: false
+            if (responsablesAPI.length > 0){
+                responsablesAPI.forEach((responsable) => {
+                    let responsableData = {}
+                    responsableData = {
+                        prenom : responsable.firstname,
+                        nom : responsable.lastname,
+                        rue: responsable.address,
+                        codePostal: responsable.zip,
+                        ville: responsable.town,
+                        numeroTelephone: [responsable.phone_mobile, responsable.phone_perso],
+                        adresseEmail: responsable.mail,
+                        informations: {
+                            factures: false,
+                            legales: false,
+                            sportives: false
+                        }
                     }
-                }
-                responsables.push(responsableData)
-            })
+                    responsables.push(responsableData)
+                })
+            }
         }
         onSuivant({idAdherent, recherche, adherent, responsables})
     }
@@ -135,7 +138,7 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                 ? <p>Recherche en cours...</p>
                 : (
                     <>
-                        {(resultats.length > 0 && (nom !== '' || prenom !== '')) && (
+                        {resultats.length > 0 && (
                             <div>
                                 <ul>
                                     {resultats.map((adherent) => (
@@ -149,6 +152,9 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                         )}
                         {(resultats.length === undefined && (nom !== '' || prenom !== '')) && (
                             <p>Aucun adhérent trouvé au nom de {nom} {prenom}</p>
+                        )}
+                        {(resultats.length === undefined && (numeroLicence !== '')) && (
+                            <p>Aucun adhérent trouvé avec le numéro de licence : {numeroLicence}</p>
                         )}
                     </>
                 )
