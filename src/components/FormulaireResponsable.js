@@ -3,7 +3,7 @@ import {capitalize, validatePhoneNumber, validateEmail, validateCodePostal} from
 import Navigation from './Navigation'
 import GestionnaireResponsables from "./GestionnaireResponsables"
 
-const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
+const FormulaireResponsable = ({ donnees, onSuivant }) => {
     const [indexResponsableActif, setIndexResponsableActif] = useState(0)
     const [partieAffichee, setPartieAffichee] = useState(1)
     const [responsables, setResponsables] = useState([
@@ -31,7 +31,8 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
         ville: '',
         numeroTelephone1: '',
         numeroTelephone2: '',
-        adresseEmail: ''
+        adresseEmail: '',
+        responsable: ''
     })
 
     useEffect(() => {
@@ -103,11 +104,19 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
     }
 
     const handleSuivant = () => {
-        onSuivant({ responsables })
+        if (validerPartie(1)){
+            onSuivant({ responsables })
+        }
     }
 
     const validerPartie = (partie) => {
         const erreurs = {}
+
+        if (partie === 1) {
+            if(responsables.length < 1 || !responsables[0].nom){
+                erreurs.responsable = 'Il faut avoir un responsable au minimun'
+            }
+        }
 
         if (partie === 2) {
             if (!responsableActif.nom) {
@@ -161,8 +170,9 @@ const FormulaireResponsable = ({ donnees, onSuivant, onPrecedent }) => {
             {partieAffichee === 1 && (
                 <>
                     <GestionnaireResponsables responsables={responsables} indexResponsbale={formGestionnaireResponsbale}/>
-                    <button onClick={ajouterResponsable}>Ajouter un autre responsable</button>
+                    <button onClick={ajouterResponsable}>Ajouter un responsable</button>
                     <button type="button" onClick={handleSuivant}>Non, passé à la suite</button>
+                    {erreurs.responsable && <span style={{ color: 'red' }}>{erreurs.responsable}</span>}
                 </>
             )}
             {partieAffichee === 2 && (

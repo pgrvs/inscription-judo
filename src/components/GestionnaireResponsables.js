@@ -7,13 +7,22 @@ const GestionnaireResponsables = ({responsables, indexResponsbale}) => {
 
     return(
         <ul>
-            {responsables.map((responsable, index) => (
-                <li key={index}>
-                    <h3>{responsable.nom} {responsable.prenom}</h3>
-                    <p>{responsable.adresseEmail}</p>
-                    <button onClick={() => handleClickResponsable(index)}>Sélectionner</button>
-                </li>
-            ))}
+            { (responsables.length > 0 && (responsables[0].nom || responsables[0].prenom)) ?
+                <>
+                    {responsables.map((responsable, index) => (
+                        <li key={index}>
+                            <h3>{responsable.nom} {responsable.prenom}</h3>
+                            <p>{responsable.adresseEmail}</p>
+                            <button onClick={() => handleClickResponsable(index)}>Sélectionner</button>
+                        </li>
+                    ))}
+                </>
+            :
+                <p>
+                    Pas encore de responsable
+                </p>
+            }
+
         </ul>
     )
 }

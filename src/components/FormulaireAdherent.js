@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import {capitalize, isAdherentMajeur, validatePhoneNumber, validateEmail, validateCodePostal} from "../common/utils"
 import Navigation from "./Navigation"
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
-const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
+const FormulaireAdherent = ({donnees, onSuivant}) => {
     const {partie} = useParams()
     const [partieAffichee, setPartieAffichee] = useState(parseInt(partie))
+    const navigate = useNavigate()
     const [adherentData, setAdherentData] = useState({
         nom: '',
         prenom: '',
@@ -59,19 +60,29 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
     }, [donnees])
 
     const handleChangeNom = (e) => {
-        const upperCaseNom = e.target.value.toUpperCase()
+        const { name, value } = e.target
+        const upperCaseNom = value.toUpperCase()
         setAdherentData({ ...adherentData, nom: upperCaseNom })
+        if (erreurs[name]) {
+            // Efface l'erreur pour ce champ si valide
+            setErreurs({ ...erreurs, [name]: '' })
+        }
     }
 
     const handleChangePrenom = (e) => {
-        setAdherentData({ ...adherentData, prenom: capitalize(e.target.value) })
+        const { name, value } = e.target
+        setAdherentData({ ...adherentData, prenom: capitalize(value) })
+        if (erreurs[name]) {
+            // Efface l'erreur pour ce champ si valide
+            setErreurs({ ...erreurs, [name]: '' })
+        }
     }
 
     const handleChange = (e) => {
         const { name, value } = e.target
         setAdherentData({ ...adherentData, [name]: value })
         if (erreurs[name]) {
-            // Efface l'erreur pour ce champ si valide
+            // Efface l'erreur pour ce champ
             setErreurs({ ...erreurs, [name]: '' })
         }
     }
@@ -87,6 +98,8 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
 
     const handleClickSuivant = () => {
         if (validerPartie(partieAffichee)) {
+            // pour etre reconnu dans les steps dans GestionnaireFormulaireAdherent
+            navigate('/nouvelAdherent/adherent/1')
             onSuivant( {adherent: adherentData, isAdherentMajeur: isAdherentMajeur(adherentData.dateDeNaissance)})
         }
     }
@@ -113,7 +126,10 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
             }
             const codePostalError = validateCodePostal(adherentData.codePostal)
             if (codePostalError) {
-                erreurs.ville = codePostalError
+                erreurs.codePostal = codePostalError
+            }
+            if (!adherentData.ville) {
+                erreurs.ville = 'La ville est obligatoire'
             }
         }
 
@@ -138,7 +154,7 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
             if (!adherentData.poids) {
                 erreurs.poids = 'Le poids est obligatoire'
             }
-            if (!adherentData.genre) {
+            if (!adherentData.genre || adherentData.genre === 'Selectionné un genre') {
                 erreurs.genre = 'Le genre est obligatoire'
             }
         }
@@ -234,7 +250,7 @@ const FormulaireAdherent = ({donnees, onSuivant, onPrecedent}) => {
                     <label>
                         Genre:
                         <select name="genre" value={adherentData.genre} onChange={handleChange}>
-                            <option value={null} >Selectionné un genre</option>
+                            <option value={null}>Selectionné un genre</option>
                             <option value="1">Masculin</option>
                             <option value="2">Féminin</option>
                         </select>

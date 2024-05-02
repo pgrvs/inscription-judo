@@ -1,11 +1,8 @@
 import Navigation from "./Navigation"
 import Message from "./Message"
 import React, {useState} from "react"
-import questionnaire_medical from '../assets/questionnaire_medical.png'
-import certificat_medical_barre from '../assets/certificat_medical_barre.png'
-import certificat_medical from '../assets/certificat_medical.png'
 
-const FormulaireEtatSante = ({onSuivant}) => {
+const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
     const [partieAffichee, setPartieAffichee] = useState(1)
     const [etatSante, setEtatSante] = useState(false)
 
@@ -24,18 +21,24 @@ const FormulaireEtatSante = ({onSuivant}) => {
 
     return (
         <div>
-            <Navigation
-                partieActuelle={partieAffichee}
-                afficherPartie={afficherPartie}
-                lienVersPagePrecedente={'/nouvelAdherent/etat-sante'}
-            />
+            {isAdherentMajeur ?
+                <Navigation
+                    partieActuelle={partieAffichee}
+                    afficherPartie={afficherPartie}
+                    lienVersPagePrecedente={'/nouvelAdherent/adherent/4'}
+                />
+                :
+                <Navigation
+                    partieActuelle={partieAffichee}
+                    afficherPartie={afficherPartie}
+                    lienVersPagePrecedente={'/nouvelAdherent/responsable'}
+                />
+            }
             {partieAffichee === 1 && (
                 <>
                     <Message
-                        message={{text: 'Donner le questionnaire de santé'}}
-                        image={{
-                            url: questionnaire_medical,
-                            alt: 'Une image de questionnaire de santé'}}/>
+                        message={'Donner le questionnaire de santé'}
+                        image={'questionnaire_medical'}/>
                     <button type="button" onClick={() => afficherPartie(2)}>Suivant</button>
                 </>
             )}
@@ -53,16 +56,12 @@ const FormulaireEtatSante = ({onSuivant}) => {
                 <div>
                     { etatSante ?
                         <Message
-                            message={{text: 'L’adhérent a besoin d’un certificat médical, à remettre avant la première séance.'}}
-                            image={{
-                                url: certificat_medical,
-                                alt: 'Une image de certificat medical',}}/>
+                            message={'L’adhérent a besoin d’un certificat médical, à remettre avant la première séance.'}
+                            image={'certificat_medical'}/>
                         :
                         <Message
-                            message={{text: 'L’adhérent n\'a besoin d’aucun certificat médical, à remettre avant la première séance.'}}
-                            image={{
-                                url: certificat_medical_barre,
-                                alt: 'Une image de certificat medical barré',}}/>
+                            message={'L’adhérent n\'a besoin d’aucun certificat médical, à remettre avant la première séance.'}
+                            image={'certificat_medical_barre'}/>
                     }
                     <button type="button" onClick={() => handleSuivant()}>Suivant</button>
                 </div>

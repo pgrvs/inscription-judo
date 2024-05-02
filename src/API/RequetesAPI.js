@@ -41,7 +41,28 @@ const getResponsablesByIdAdherent = async (idAdherent) => {
     }
 }
 
+const getCategorieLicence = async () => {
+    const api = new ConnexionAPI()
+
+    let filter = `category=2` // 2 représente d'id du tag 'Licence'
+
+    try {
+        const response = await api.callAPI(
+            'GET',
+            'products',
+            filter
+        )
+        return  await response.json()
+
+    } catch (error) {
+        console.error('Erreur lors de la requête : getResponsablesByIdAdherent', error)
+    }
+}
+
+
+
 export {
     rechercheAdherents,
-    getResponsablesByIdAdherent
+    getResponsablesByIdAdherent,
+    getCategorieLicence
 }

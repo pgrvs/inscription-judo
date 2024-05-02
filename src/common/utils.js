@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 const splitName = (fullName) => {
     const words = fullName.trim().split(' ')
 
@@ -44,6 +46,11 @@ const isAdherentMajeur = (dateDeNaissance) => {
     return false
 }
 
+const calculerAge = (birthDate) => {
+    const birthMoment = moment(birthDate, 'YYYY-MM-DD')
+    return moment().diff(birthMoment, 'years')
+}
+
 const validatePhoneNumber = (phoneNumber) => {
     if (!phoneNumber) {
         return 'Le numéro de téléphone est obligatoire'
@@ -79,6 +86,7 @@ export {
     convertTimestampToDate,
     capitalize,
     isAdherentMajeur,
+    calculerAge,
     validatePhoneNumber,
     validateEmail,
     validateCodePostal

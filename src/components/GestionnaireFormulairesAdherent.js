@@ -23,27 +23,24 @@ const GestionnaireFormulairesAdherent = () => {
 
     const handleSuivant = (data) => {
         setDonnees({ ...donnees, ...data })
-        navigate(nextRoute())
+        navigate(nextRoute(data.isAdherentMajeur) || donnees.isAdherentMajeur)
     }
 
-    const handlePrecedent = () => {
-        navigate(prevRoute())
-    }
-
-    const nextRoute = () => {
-        let steps = [
-            '/nouvelAdherent',
-            '/nouvelAdherent/adherent/1',
-            '/nouvelAdherent/responsable',
-            '/nouvelAdherent/etat-sante',
-            '/nouvelAdherent/cotisation',
-            '/nouvelAdherent/fin',
-        ]
-
-        if(donnees.isAdherentMajeur){
+    const nextRoute = (isAdherentMajeur) => {
+        let steps = []
+        if(isAdherentMajeur){
             steps = [
                 '/nouvelAdherent',
                 '/nouvelAdherent/adherent/1',
+                '/nouvelAdherent/etat-sante',
+                '/nouvelAdherent/cotisation',
+                '/nouvelAdherent/fin',
+            ]
+        } else {
+            steps = [
+                '/nouvelAdherent',
+                '/nouvelAdherent/adherent/1',
+                '/nouvelAdherent/responsable',
                 '/nouvelAdherent/etat-sante',
                 '/nouvelAdherent/cotisation',
                 '/nouvelAdherent/fin',
@@ -52,29 +49,6 @@ const GestionnaireFormulairesAdherent = () => {
 
         const currentStep = steps.indexOf(window.location.pathname)
         return currentStep < steps.length - 1 ? steps[currentStep + 1] : '/'
-    }
-
-    const prevRoute = () => {
-        let steps = [
-            '/nouvelAdherent',
-            '/nouvelAdherent/adherent',
-            '/nouvelAdherent/responsable',
-            '/nouvelAdherent/etat-sante',
-            '/nouvelAdherent/cotisation',
-            '/nouvelAdherent/fin',
-        ]
-
-        if(!donnees.isAdherentMajeur){
-            steps = [
-                '/nouvelAdherent',
-                '/nouvelAdherent/adherent',
-                '/nouvelAdherent/etat-sante',
-                '/nouvelAdherent/cotisation',
-                '/nouvelAdherent/fin',
-            ]
-        }
-        const currentStep = steps.indexOf(window.location.pathname)
-        return currentStep > 0 ? steps[currentStep - 1] : '/'
     }
 
     return (
@@ -88,26 +62,22 @@ const GestionnaireFormulairesAdherent = () => {
                 <Route path="adherent/:partie"
                        element={<FormulaireAdherent
                            donnees={donnees}
-                           onSuivant={handleSuivant}
-                           onPrecedent={handlePrecedent} />} />
+                           onSuivant={handleSuivant} />} />
                 <Route path="responsable"
                        element={<FormulaireResponsable
                            donnees={donnees}
-                           onSuivant={handleSuivant}
-                           onPrecedent={handlePrecedent} />} />
+                           onSuivant={handleSuivant} />} />
                 <Route path="etat-sante"
                        element={<FormulaireEtatSante
-                           onSuivant={handleSuivant}
-                           onPrecedent={handlePrecedent} />} />
+                           isAdherentMajeur={donnees.isAdherentMajeur}
+                           onSuivant={handleSuivant} />} />
                 <Route path="cotisation"
                        element={<FormulaireCotisation
                            donnees={donnees}
-                           onSuivant={handleSuivant}
-                           onPrecedent={handlePrecedent} />} />
+                           onSuivant={handleSuivant} />} />
                 <Route path="fin"
                        element={<FormulaireFin
-                           donnees={donnees}
-                           onPrecedent={handlePrecedent} />} />
+                           donnees={donnees}/>} />
             </Routes>
         </div>
     )
