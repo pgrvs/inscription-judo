@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react'
-import {capitalize, isAdherentMajeur, validatePhoneNumber, validateEmail, validateCodePostal} from "../common/utils"
-import Navigation from "./Navigation"
-import {useNavigate, useParams} from "react-router-dom";
+import React, {useContext, useEffect, useState} from 'react'
+import {capitalize, isAdherentMajeur, validatePhoneNumber, validateEmail, validateCodePostal} from "../../common/utils"
+import Navigation from "../Navigation"
+import { RouteContext } from '../RouteProvider'
+import BarreEtapes from "./BarreEtapes"
 
 const FormulaireAdherent = ({donnees, onSuivant}) => {
-    const {partie} = useParams()
-    const [partieAffichee, setPartieAffichee] = useState(parseInt(partie))
-    const navigate = useNavigate()
+    const [partieAffichee, setPartieAffichee] = useState(1)
+    const previousRoute = useContext(RouteContext)
     const [adherentData, setAdherentData] = useState({
         nom: '',
         prenom: '',
@@ -20,7 +20,6 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
         poids: '',
         genre: ''
     })
-
     const [erreurs, setErreurs] = useState({
         nom: '',
         prenom: '',
@@ -36,7 +35,13 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
     })
 
     useEffect(() => {
-        if (donnees.idAdherent) {
+        if (previousRoute === '/nouvelAdherent/responsable' || previousRoute === '/nouvelAdherent/etat-sante') {
+            setPartieAffichee(4)
+        }
+    }, [previousRoute]);
+
+    useEffect(() => {
+        if (donnees.adherent) {
             setAdherentData({
                 nom: donnees.adherent.nom || '',
                 prenom: donnees.adherent.prenom || '',
@@ -98,8 +103,6 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
 
     const handleClickSuivant = () => {
         if (validerPartie(partieAffichee)) {
-            // pour etre reconnu dans les steps dans GestionnaireFormulaireAdherent
-            navigate('/nouvelAdherent/adherent/1')
             onSuivant( {adherent: adherentData, isAdherentMajeur: isAdherentMajeur(adherentData.dateDeNaissance)})
         }
     }
@@ -170,6 +173,7 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                 afficherPartie={afficherPartie}
                 lienVersPagePrecedente={'/nouvelAdherent'}
             />
+            <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
             {partieAffichee === 1 && (
                 <fieldset>
                     <legend>Informations personnelles</legend>

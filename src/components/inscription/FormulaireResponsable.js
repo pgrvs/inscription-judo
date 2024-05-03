@@ -1,27 +1,13 @@
 import React, {useEffect, useState} from 'react'
-import {capitalize, validatePhoneNumber, validateEmail, validateCodePostal} from "../common/utils"
-import Navigation from './Navigation'
+import {capitalize, validatePhoneNumber, validateEmail, validateCodePostal} from "../../common/utils"
+import Navigation from '../Navigation'
 import GestionnaireResponsables from "./GestionnaireResponsables"
+import BarreEtapes from "./BarreEtapes"
 
 const FormulaireResponsable = ({ donnees, onSuivant }) => {
     const [indexResponsableActif, setIndexResponsableActif] = useState(0)
     const [partieAffichee, setPartieAffichee] = useState(1)
-    const [responsables, setResponsables] = useState([
-        {
-            nom: '',
-            prenom: '',
-            rue: donnees.adherent.rue,
-            codePostal: donnees.adherent.codePostal,
-            ville: donnees.adherent.ville,
-            numeroTelephone: ['', ''],
-            adresseEmail: '',
-            informations: {
-                factures: false,
-                legales: false,
-                sportives: false,
-            },
-        },
-    ])
+    const [responsables, setResponsables] = useState(donnees.responsables)
 
     const [erreurs, setErreurs] = useState({
         nom: '',
@@ -165,8 +151,9 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
             <Navigation
                 partieActuelle={partieAffichee}
                 afficherPartie={afficherPartie}
-                lienVersPagePrecedente={'/nouvelAdherent/adherent/4'}
+                lienVersPagePrecedente={'/nouvelAdherent/adherent'}
             />
+            <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
             {partieAffichee === 1 && (
                 <>
                     <GestionnaireResponsables responsables={responsables} indexResponsbale={formGestionnaireResponsbale}/>

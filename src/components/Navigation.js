@@ -5,7 +5,6 @@ const Navigation = ({ partieActuelle, afficherPartie, lienVersPagePrecedente }) 
     const navigate = useNavigate()
 
     const handleHome = () => {
-        // Redirige vers la page d'accueil
         navigate('/')
     }
 

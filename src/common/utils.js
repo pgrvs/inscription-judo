@@ -33,7 +33,20 @@ const convertTimestampToDate = (timestamp) => {
 }
 
 const capitalize = (string) => {
-    return string.replace(/\b\w/g, (char) => char.toUpperCase())
+    if (!string || typeof string !== 'string') {
+        return '' // Gérer les cas où l'entrée n'est pas une chaîne ou est vide
+    }
+
+    return string
+        .split(' ') // Divise la chaîne en mots
+        .map((word) => {
+            if (word) {
+                // Prendre la première lettre et la capitaliser, puis ajouter le reste du mot
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            }
+            return '' // Gérer les cas où il y a des espaces supplémentaires
+        })
+        .join(' ') // Rejoindre les mots capitalisés en une seule chaîne
 }
 
 const isAdherentMajeur = (dateDeNaissance) => {
@@ -49,6 +62,30 @@ const isAdherentMajeur = (dateDeNaissance) => {
 const calculerAge = (birthDate) => {
     const birthMoment = moment(birthDate, 'YYYY-MM-DD')
     return moment().diff(birthMoment, 'years')
+}
+
+const informationsRecevoirParMailToString = (informations) => {
+    if (!informations || typeof informations !== 'object') {
+        return '' // Gérer les cas où l'entrée n'est pas un objet
+    }
+
+    // Obtenir les clés et valeurs de l'objet
+    const entries = Object.entries(informations)
+
+    // Filtrer les clés avec des valeurs 'true'
+    const trueEntries = entries.filter(([key, value]) => value === true)
+
+    // Obtenir les indices des clés filtrées
+    const indices = trueEntries.map(([key], index) => entries.indexOf([key, true]) + 1)
+
+    // Transformer les indices en chaîne de caractères séparée par des virgules
+    return indices.join(',')
+}
+
+const calculeDerniereAnneeLicenciee = (categorieCotisation) => {
+    const annee = new Date().getFullYear()
+
+    return annee + '-' + (annee+1) + ' ' + categorieCotisation
 }
 
 const validatePhoneNumber = (phoneNumber) => {
@@ -87,6 +124,8 @@ export {
     capitalize,
     isAdherentMajeur,
     calculerAge,
+    informationsRecevoirParMailToString,
+    calculeDerniereAnneeLicenciee,
     validatePhoneNumber,
     validateEmail,
     validateCodePostal

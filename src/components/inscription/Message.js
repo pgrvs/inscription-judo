@@ -1,6 +1,6 @@
-import QuestionnaireMedical from '../assets/QuestionnaireMedical'
-import CertificatMedicalBarre from '../assets/CertificatMedicalBarre'
-import CertificatMedical from '../assets/CertificatMedical'
+import QuestionnaireMedical from '../../assets/QuestionnaireMedical'
+import CertificatMedicalBarre from '../../assets/CertificatMedicalBarre'
+import CertificatMedical from '../../assets/CertificatMedical'
 
 const Message = ({message, image}) => {
     let content

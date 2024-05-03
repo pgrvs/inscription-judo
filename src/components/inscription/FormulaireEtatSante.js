@@ -1,10 +1,19 @@
-import Navigation from "./Navigation"
+import Navigation from "../Navigation"
 import Message from "./Message"
-import React, {useState} from "react"
+import React, {useState, useEffect, useContext} from "react"
+import { RouteContext } from '../RouteProvider'
+import BarreEtapes from "./BarreEtapes";
 
 const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
     const [partieAffichee, setPartieAffichee] = useState(1)
     const [etatSante, setEtatSante] = useState(false)
+    const previousRoute = useContext(RouteContext)
+
+    useEffect(() => {
+        if (previousRoute === '/nouvelAdherent/cotisation') {
+            setPartieAffichee(3)
+        }
+    }, [previousRoute])
 
     const afficherPartie = (partie) => {
         setPartieAffichee(partie)
@@ -25,7 +34,7 @@ const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
                 <Navigation
                     partieActuelle={partieAffichee}
                     afficherPartie={afficherPartie}
-                    lienVersPagePrecedente={'/nouvelAdherent/adherent/4'}
+                    lienVersPagePrecedente={'/nouvelAdherent/adherent'}
                 />
                 :
                 <Navigation
@@ -34,6 +43,7 @@ const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
                     lienVersPagePrecedente={'/nouvelAdherent/responsable'}
                 />
             }
+            <BarreEtapes isMajeur={isAdherentMajeur}/>
             {partieAffichee === 1 && (
                 <>
                     <Message

@@ -1,26 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { getCategorieLicence } from '../API/RequetesAPI'
-import {calculerAge} from "../common/utils"
-import Navigation from "./Navigation";
+import { getCategorieLicence } from '../../API/RequetesAPI'
+import {calculerAge} from "../../common/utils"
+import Navigation from "../Navigation"
+import ConfirmationModal from "../ConfiramtionModal"
+import BarreEtapes from "./BarreEtapes"
 
 const getDefaultCategory = (age, categories) => {
-    if (age >= 6 && age <= 7) {
-        return categories.find((cat) => cat.label === 'Mini-poussins')
-    } else if (age >= 8 && age <= 9) {
-        return categories.find((cat) => cat.label === 'Poussins')
-    } else if (age >= 10 && age <= 11) {
-        return categories.find((cat) => cat.label === 'Benjamins')
-    } else if (age >= 12 && age <= 14) {
-        return categories.find((cat) => cat.label === 'Minimes')
-    } else if (age >= 15 && age <= 17) {
-        return categories.find((cat) => cat.label === 'Cadets')
-    } else if (age >= 18 && age <= 20) {
-        return categories.find((cat) => cat.label === 'Junior')
-    } else if (age >= 21 && age <= 34) {
-        return categories.find((cat) => cat.label === 'Senior')
-    } else if (age >= 35) {
-        return categories.find((cat) => cat.label === 'Veterans')
-    }
+    if (age >= 6 && age <= 7) return categories.find((cat) => cat.label === 'Mini-poussins')
+    if (age >= 8 && age <= 9) return categories.find((cat) => cat.label === 'Poussins')
+    if (age >= 10 && age <= 11) return categories.find((cat) => cat.label === 'Benjamins')
+    if (age >= 12 && age <= 14) return categories.find((cat) => cat.label === 'Minimes')
+    if (age >= 15 && age <= 17) return categories.find((cat) => cat.label === 'Cadets')
+    if (age >= 18 && age <= 20) return categories.find((cat) => cat.label === 'Junior')
+    if (age >= 21 && age <= 34) return categories.find((cat) => cat.label === 'Sénior')
+    if (age >= 35) return categories.find((cat) => cat.label === 'Vétérans')
     return null
 }
 
@@ -28,6 +21,8 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
     const [categories, setCategories] = useState([]);
     const [selectedCategorie, setSelectedCategorie] = useState(null)
     const [paiement, setPaiement] = useState(null)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [newCategory, setNewCategory] = useState(null)
     const [erreurs, setErreurs] = useState({
         categorie: '',
         paiement: ''
@@ -68,11 +63,22 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
     const handleCategoryChange = (e) => {
         const categoryId = e.target.value
         const category = categories.find((cat) => cat.id === categoryId)
-        setSelectedCategorie(category)
+        setNewCategory(category)
+        setIsModalOpen(true)
         if (erreurs[e.target.name]) {
             // Efface l'erreur pour ce champ
             setErreurs({ ...erreurs, [e.target.name]: '' })
         }
+    }
+
+    const handleConfirmChange = () => {
+        setSelectedCategorie(newCategory)
+        setIsModalOpen(false)
+    }
+
+    const handleCancelChange = () => {
+        setNewCategory(null)
+        setIsModalOpen(false)
     }
 
     const handlePaiementChange = (e) => {
@@ -85,13 +91,16 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
 
     const handleClickSuivant = async (selectedCategorie, paiement) => {
         const cotisation ={
-            'selectedCategorie' : selectedCategorie,
+            'categorie' : selectedCategorie,
             'paiement' :paiement,
         }
         if (valider()) {
             onSuivant({cotisation})
         }
     }
+
+    const adherentName = `${donnees.adherent?.prenom ?? ''} ${donnees.adherent?.nom ?? ''}`
+    const categoryLabel = newCategory?.label ?? ''
 
     return (
         <div>
@@ -100,6 +109,7 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
                 afficherPartie={1}
                 lienVersPagePrecedente={'/nouvelAdherent/etat-sante'}
             />
+            <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
             <h2>Formulaire de Cotisation</h2>
             <div>
                 <label htmlFor="category">Catégorie :</label>
@@ -145,6 +155,14 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
             <button onClick={() => handleClickSuivant(selectedCategorie, paiement)}>
                 Suivant
             </button>
+
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onConfirm={handleConfirmChange}
+                onClose={handleCancelChange}
+                message={`Êtes-vous sûr de vouloir changer ${adherentName} 
+                dans catégorie ${categoryLabel} ?`}
+            />
         </div>
     )
 }

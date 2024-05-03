@@ -18,7 +18,7 @@ class ConnexionAPI {
 
         if (method === 'POST' || method === 'PUT') {
             headers['Content-Type'] = 'application/json'
-            options.body = JSON.stringify(data)
+            options.body = data ? JSON.stringify(data) : null
         } else if (method === 'DELETE') {
             options.method = 'DELETE'
         } else if (data) {
@@ -26,8 +26,10 @@ class ConnexionAPI {
         }
 
         try {
+            console.log('appel API ok')
             return await fetch(url, options)
         } catch (error) {
+            console.log('appel API pas ok')
             console.error('Error fetching data:', error)
             throw error
         }

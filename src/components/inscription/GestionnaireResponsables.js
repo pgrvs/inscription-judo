@@ -7,7 +7,7 @@ const GestionnaireResponsables = ({responsables, indexResponsbale}) => {
 
     return(
         <ul>
-            { (responsables.length > 0 && (responsables[0].nom || responsables[0].prenom)) ?
+            { (responsables.length > 0) ?
                 <>
                     {responsables.map((responsable, index) => (
                         <li key={index}>

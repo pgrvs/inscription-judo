@@ -6,6 +6,7 @@ import FormulaireResponsable from './FormulaireResponsable'
 import FormulaireEtatSante from './FormulaireEtatSante'
 import FormulaireCotisation from './FormulaireCotisation'
 import FormulaireFin from './FormulaireFin'
+import RouteProvider from '../RouteProvider'
 
 const GestionnaireFormulairesAdherent = () => {
     const navigate = useNavigate()
@@ -31,7 +32,7 @@ const GestionnaireFormulairesAdherent = () => {
         if(isAdherentMajeur){
             steps = [
                 '/nouvelAdherent',
-                '/nouvelAdherent/adherent/1',
+                '/nouvelAdherent/adherent',
                 '/nouvelAdherent/etat-sante',
                 '/nouvelAdherent/cotisation',
                 '/nouvelAdherent/fin',
@@ -39,7 +40,7 @@ const GestionnaireFormulairesAdherent = () => {
         } else {
             steps = [
                 '/nouvelAdherent',
-                '/nouvelAdherent/adherent/1',
+                '/nouvelAdherent/adherent',
                 '/nouvelAdherent/responsable',
                 '/nouvelAdherent/etat-sante',
                 '/nouvelAdherent/cotisation',
@@ -54,31 +55,33 @@ const GestionnaireFormulairesAdherent = () => {
     return (
         <div>
             {console.log(donnees)}
-            <Routes>
-                <Route path="/"
-                       element={<RechercheAdherent
-                           donneesRecherche={donnees.recherche}
-                           onSuivant={handleSuivant} />} />
-                <Route path="adherent/:partie"
-                       element={<FormulaireAdherent
-                           donnees={donnees}
-                           onSuivant={handleSuivant} />} />
-                <Route path="responsable"
-                       element={<FormulaireResponsable
-                           donnees={donnees}
-                           onSuivant={handleSuivant} />} />
-                <Route path="etat-sante"
-                       element={<FormulaireEtatSante
-                           isAdherentMajeur={donnees.isAdherentMajeur}
-                           onSuivant={handleSuivant} />} />
-                <Route path="cotisation"
-                       element={<FormulaireCotisation
-                           donnees={donnees}
-                           onSuivant={handleSuivant} />} />
-                <Route path="fin"
-                       element={<FormulaireFin
-                           donnees={donnees}/>} />
-            </Routes>
+            <RouteProvider>
+                <Routes>
+                    <Route path="/"
+                           element={<RechercheAdherent
+                               donneesRecherche={donnees.recherche}
+                               onSuivant={handleSuivant} />} />
+                    <Route path="adherent"
+                           element={<FormulaireAdherent
+                               donnees={donnees}
+                               onSuivant={handleSuivant} />} />
+                    <Route path="responsable"
+                           element={<FormulaireResponsable
+                               donnees={donnees}
+                               onSuivant={handleSuivant} />} />
+                    <Route path="etat-sante"
+                           element={<FormulaireEtatSante
+                               isAdherentMajeur={donnees.isAdherentMajeur}
+                               onSuivant={handleSuivant} />} />
+                    <Route path="cotisation"
+                           element={<FormulaireCotisation
+                               donnees={donnees}
+                               onSuivant={handleSuivant} />} />
+                    <Route path="fin"
+                           element={<FormulaireFin
+                               donnees={donnees}/>} />
+                </Routes>
+            </RouteProvider>
         </div>
     )
 }

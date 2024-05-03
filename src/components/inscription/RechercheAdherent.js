@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import {rechercheAdherents, getResponsablesByIdAdherent} from "../API/RequetesAPI"
-import Navigation from './Navigation'
-import {splitName, convertTimestampToDate, capitalize} from "../common/utils"
+import {rechercheAdherents, getResponsablesByIdAdherent} from "../../API/RequetesAPI"
+import Navigation from '../Navigation'
+import {splitName, convertTimestampToDate, capitalize} from "../../common/utils"
 
 const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
     const [nom, setNom] = useState('')
@@ -11,25 +11,22 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        const fetcheData = async () => {
-            setLoading(true)
-
-            let results = []
-
-            if (nom || prenom || numeroLicence) {
-                try {
-                    results = await rechercheAdherents(prenom, nom, numeroLicence)
-                } catch (error) {
-                    console.error("Erreur lors de la recherche des adhérents:", error)
-                }
-            }
-            setResultats(results)
-            setLoading(false)
-        }
         fetcheData()
-
     }, [nom, prenom, numeroLicence])
 
+    const fetcheData = async () => {
+        setLoading(true)
+        let results = []
+        if (nom || prenom || numeroLicence) {
+            try {
+                results = await rechercheAdherents(prenom, nom, numeroLicence)
+            } catch (error) {
+                console.error("Erreur lors de la recherche des adhérents:", error)
+            }
+        }
+        setResultats(results)
+        setLoading(false)
+    }
 
     useEffect(() => {
         if (Object.keys(donneesRecherche).length !== 0) {
