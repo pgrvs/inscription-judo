@@ -66,26 +66,55 @@ const calculerAge = (birthDate) => {
 
 const informationsRecevoirParMailToString = (informations) => {
     if (!informations || typeof informations !== 'object') {
-        return '' // Gérer les cas où l'entrée n'est pas un objet
+        return '' // Gérer les cas où l'entrée n'est pas un objet ou est vide
     }
 
     // Obtenir les clés et valeurs de l'objet
     const entries = Object.entries(informations)
 
-    // Filtrer les clés avec des valeurs 'true'
-    const trueEntries = entries.filter(([key, value]) => value === true)
-
-    // Obtenir les indices des clés filtrées
-    const indices = trueEntries.map(([key], index) => entries.indexOf([key, true]) + 1)
+    // Filtrer pour ne garder que les paires où la valeur est 'true'
+    const trueEntries = entries
+        .map(([key, value], index) => (value ? index + 1 : null))
+        .filter((index) => index !== null)
 
     // Transformer les indices en chaîne de caractères séparée par des virgules
-    return indices.join(',')
+    return trueEntries.join(',')
+};
+
+const calculeAnneeLicenciee = (categorieCotisation) => {
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = date.getMonth()
+
+    if (month < 5 ) {
+        return (year-1) + '-' + (year)
+    }
+    return year + '-' + (year+1)
 }
 
-const calculeDerniereAnneeLicenciee = (categorieCotisation) => {
-    const annee = new Date().getFullYear()
-
-    return annee + '-' + (annee+1) + ' ' + categorieCotisation
+const categoryForDolibarr = (categorieLabel) => {
+    switch (categorieLabel) {
+        case ('Mini-poussins') :
+            return '1'
+        case ('Poussins') :
+            return '2'
+        case ('Benjamins') :
+            return '3'
+        case ('Minimes') :
+            return '4'
+        case ('Cadets') :
+            return '5'
+        case ('Junior') :
+            return '6'
+        case ('Sénior') :
+            return '7'
+        case ('Vétérans') :
+            return '8'
+        case ('Handi Judo') :
+            return '9'
+        default:
+            return null
+    }
 }
 
 const validatePhoneNumber = (phoneNumber) => {
@@ -125,7 +154,8 @@ export {
     isAdherentMajeur,
     calculerAge,
     informationsRecevoirParMailToString,
-    calculeDerniereAnneeLicenciee,
+    calculeAnneeLicenciee,
+    categoryForDolibarr,
     validatePhoneNumber,
     validateEmail,
     validateCodePostal

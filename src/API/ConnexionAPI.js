@@ -26,10 +26,9 @@ class ConnexionAPI {
         }
 
         try {
-            console.log('appel API ok')
             return await fetch(url, options)
         } catch (error) {
-            console.log('appel API pas ok')
+            console.log(url, options)
             console.error('Error fetching data:', error)
             throw error
         }

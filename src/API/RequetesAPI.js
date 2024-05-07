@@ -1,13 +1,16 @@
 import ConnexionAPI from "./ConnexionAPI"
-import {informationsRecevoirParMailToString, calculeDerniereAnneeLicenciee} from "../common/utils"
+import {
+    informationsRecevoirParMailToString,
+    calculeAnneeLicenciee, calculeDerniereAnneeLicenciee, categoryForDolibarr
+} from "../common/utils"
 
 const rechercheAdherents = async (prenom, nom, numeroLicence) => {
     const api = new ConnexionAPI()
 
-    let filter = `sqlfilters=(t.nom:like:'%${prenom}%${nom}%')`
-    console.log(numeroLicence)
+    let filter = `sqlfilters=(t.nom:like:'%25${nom}%25${prenom}%25')`
+
     if (numeroLicence) {
-        filter = `sqlfilters=(ef.numroadhrent:like:'${numeroLicence}%')`
+        filter = `sqlfilters=(ef.numroadhrent:like:'${numeroLicence}%25')`
     }
 
     try {
@@ -63,9 +66,7 @@ const getCategorieLicence = async () => {
 const addAdherent = async (adherentData, etatSante, cotisation) => {
     const api = new ConnexionAPI()
 
-    const certificatmedicale = etatSante ? 1 : 2
-
-    const derniereAnneeLicenciee = calculeDerniereAnneeLicenciee(cotisation.categorie.label)
+    const certificatmedicale = etatSante ? 2 : 1
 
     const adherent = {
         'name' : adherentData.nom + ' ' + adherentData.prenom,
@@ -74,9 +75,11 @@ const addAdherent = async (adherentData, etatSante, cotisation) => {
             'options_couleurdelaceinture' : adherentData.couleurCeinture,
             'options_poidsenkilogramme' : adherentData.poids,
             'options_genre' : adherentData.genre,
-            'options_certificatmdicale': certificatmedicale,
-            'options_droitimage': true,
-            'options_derniereanneelicenciee': derniereAnneeLicenciee,
+            'options_certificatmdicale' : certificatmedicale,
+            'options_droitimage' : true,
+            'options_derniereanneelicenciee' : calculeAnneeLicenciee(),
+            'options_datedinscription' : new Date(),
+            'options_categorie': categoryForDolibarr(cotisation.categorie.label)
         },
         'address' : adherentData.rue,
         'zip' : adherentData.codePostal,
@@ -103,9 +106,8 @@ const addAdherent = async (adherentData, etatSante, cotisation) => {
 const updateAdherent = async (idAdherent, adherentData, etatSante, cotisation) => {
     const api = new ConnexionAPI()
 
-    const certificatmedicale = etatSante ? 1 : 2
-
-    const derniereAnneeLicenciee = calculeDerniereAnneeLicenciee(cotisation.categorie.label)
+    const certificatmedicale = etatSante ? 2 : 1
+    const droitImage = adherentData.droitImage ? true : false
 
     const adherent = {
         'name' : adherentData.nom + ' ' + adherentData.prenom,
@@ -114,8 +116,11 @@ const updateAdherent = async (idAdherent, adherentData, etatSante, cotisation) =
             'options_couleurdelaceinture' : adherentData.couleurCeinture,
             'options_poidsenkilogramme' : adherentData.poids,
             'options_genre' : adherentData.genre,
-            'options_certificatmdicale': certificatmedicale,
-            'options_derniereanneelicenciee': derniereAnneeLicenciee,
+            'options_certificatmdicale' : certificatmedicale,
+            'options_droitimage' : droitImage,
+            'options_derniereanneelicenciee' : calculeAnneeLicenciee(),
+            'options_datedinscription' : new Date(),
+            'options_categorie': categoryForDolibarr(cotisation.categorie.label)
         },
         'address' : adherentData.rue,
         'zip' : adherentData.codePostal,
@@ -165,8 +170,8 @@ const addResponsableToAdherent = async (idAdherent, responsableData) => {
         'address' : responsableData.rue,
         'zip' : responsableData.codePostal,
         'town' : responsableData.ville,
-        'phone_perso' : responsableData.numeroTelephone,
-        'phone_mobile' : responsableData.numeroTelephone,
+        'phone_perso' : responsableData.numeroTelephone[0],
+        'phone_mobile' : responsableData.numeroTelephone[1],
         'email' : responsableData.adresseEmail,
         'mail' : responsableData.adresseEmail,
         'socid' : idAdherent
@@ -185,7 +190,7 @@ const addResponsableToAdherent = async (idAdherent, responsableData) => {
     }
 }
 
-const updateResponsableToAdherent = async (idAdherent, responsableData, idResponsable) => {
+const updateResponsableToAdherent = async (idAdherent, responsableData) => {
     const api = new ConnexionAPI()
 
     const responsable = {
@@ -197,8 +202,8 @@ const updateResponsableToAdherent = async (idAdherent, responsableData, idRespon
         'address' : responsableData.rue,
         'zip' : responsableData.codePostal,
         'town' : responsableData.ville,
-        'phone_perso' : responsableData.numeroTelephone,
-        'phone_mobile' : responsableData.numeroTelephone,
+        'phone_perso' : responsableData.numeroTelephone[0],
+        'phone_mobile' : responsableData.numeroTelephone[1],
         'email' : responsableData.adresseEmail,
         'mail' : responsableData.adresseEmail,
         'socid' : idAdherent
@@ -206,14 +211,92 @@ const updateResponsableToAdherent = async (idAdherent, responsableData, idRespon
 
     try {
         const response = await api.callAPI(
-            'POST',
-            'contacts/' + idResponsable,
+            'PUT',
+            'contacts/' + responsableData.id,
             responsable
         )
         return  await response.json()
 
     } catch (error) {
         console.error('Erreur lors de la requête updateResponsableToAdherent :', error)
+    }
+}
+
+const createFacture = async (idAdherent, cotisation) => {
+    const api = new ConnexionAPI()
+
+    let description = cotisation.categorie.description + ' ' + calculeAnneeLicenciee() + "<br/>"
+        + 'Paiement en ' + cotisation.paiement + ' fois'
+
+    const facture = {
+        "socid" : idAdherent,
+        "date_lim_reglement" : new Date(),
+        "lines" : [
+            {
+                "ref" : cotisation.categorie.ref,
+                "desc" : description,
+                "product_ref" : cotisation.categorie.ref,
+                "fk_produit" : cotisation.categorie.id,
+                "tva_tx" : cotisation.categorie.tva_tx,
+                "subprice" : cotisation.categorie.price_ttc,
+                "qty" : "1"
+            }
+        ],
+        "array_options": {
+            "options_combiendepaiement": cotisation.paiement
+        },
+    }
+
+    try {
+        const response = await api.callAPI(
+            'POST',
+            'invoices',
+            facture
+        )
+        return  await response.json()
+
+    } catch (error) {
+        console.error('Erreur lors de la requête createFacture :', error)
+    }
+}
+
+const validateFacture = async (idFacture) => {
+    const api = new ConnexionAPI()
+
+    const tierParam = {'notrigger' : 0}
+
+    try {
+        const response = await api.callAPI(
+            'POST',
+            'invoices/' + idFacture + '/validate',
+            tierParam
+        )
+        return  await response.json()
+
+    } catch (error) {
+        console.error('Erreur lors de la requête createFacture :', error)
+    }
+}
+
+const createPdfFacture = async (ref) => {
+    const api = new ConnexionAPI()
+
+    const tierParam = {
+        'modulepart' : 'invoice',
+        'original_file' : ref + '/' + ref + '.pdf',
+        'langcode' : 'fr_FR'
+    }
+
+    try {
+        const response = await api.callAPI(
+            'PUT',
+            'documents/builddoc',
+            tierParam
+        )
+        return  await response.json()
+
+    } catch (error) {
+        console.error('Erreur lors de la requête createPdfFacture :', error)
     }
 }
 
@@ -225,5 +308,8 @@ export {
     updateAdherent,
     addCategorieToAdherent,
     addResponsableToAdherent,
-    updateResponsableToAdherent
+    updateResponsableToAdherent,
+    createFacture,
+    validateFacture,
+    createPdfFacture
 }

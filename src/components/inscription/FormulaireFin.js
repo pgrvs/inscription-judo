@@ -1,51 +1,52 @@
 import BarreEtapes from "./BarreEtapes"
-import React, {useEffect} from "react"
+import React from "react"
 import Navigation from "../Navigation"
 import { useNavigate } from 'react-router-dom'
-import {addAdherent, addCategorieToAdherent, updateAdherent} from "../../API/RequetesAPI"
+import {
+    addAdherent,
+    addCategorieToAdherent,
+    addResponsableToAdherent,
+    updateAdherent,
+    updateResponsableToAdherent,
+    createFacture,
+    validateFacture,
+    createPdfFacture
+} from "../../API/RequetesAPI"
 
 const FormulaireFin = ({donnees}) => {
     const navigate = useNavigate()
 
-    const postAdherent = async () => {
-        try {
-            return await addAdherent(donnees.adherent, donnees.etatSante)
-        } catch (error) {
-            console.error('Erreur lors de la requete addAdherent:', error)
-        }
-    }
-
-    const putAdherent = async () => {
-        try {
-            return await updateAdherent(donnees.idAdherent, donnees.adherent, donnees.etatSante)
-        } catch (error) {
-            console.error('Erreur lors de la requete updateAdherent:', error)
-        }
-    }
-
-    const postCategorieToAdherent = async () => {
-        try {
-            return await addCategorieToAdherent()
-        } catch (error) {
-            console.error('Erreur lors de la requete updateAdherent:', error)
-        }
-    }
-
     const handleHome = async () => {
-        let id
+        let adherentId
+
+        // Création / modification de l'adhérent
         if (!donnees.idAdherent){
-            id =  await addAdherent(donnees.adherent, donnees.etatSante, donnees.cotisation)
+            adherentId =  await addAdherent(donnees.adherent, donnees.etatSante, donnees.cotisation)
         } else {
             const response = await updateAdherent(donnees.idAdherent, donnees.adherent, donnees.etatSante, donnees.cotisation)
-            id = response.id
+            adherentId = response.id
         }
-        addCategorieToAdherent(id)
 
-        donnees.responsables.map((responsable) => {
+        // Ajout du tag 'adherent'
+        addCategorieToAdherent(adherentId)
 
+        // Création / modification des responsables de l'adhérent
+        donnees.responsables.forEach((responsable) => {
+            if (!responsable.id){
+                addResponsableToAdherent(adherentId, responsable)
+            } else {
+                console.log(responsable)
+                updateResponsableToAdherent(adherentId, responsable)
+            }
         })
 
-        console.log(id)
+        const idFacture = await createFacture(adherentId, donnees.cotisation)
+        const facture = await validateFacture(idFacture)
+        createPdfFacture(facture.ref)
+
+        //Envoie du mail
+
+
         navigate('/')
     }
 
@@ -54,7 +55,7 @@ const FormulaireFin = ({donnees}) => {
             <Navigation
                 partieActuelle={1}
                 afficherPartie={1}
-                lienVersPagePrecedente={'/cotisation'}
+                lienVersPagePrecedente={'/nouvelAdherent/cotisation'}
             />
             <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
             <h3>L'adhérent va recevoir par email :</h3>

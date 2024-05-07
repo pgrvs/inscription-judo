@@ -31,7 +31,8 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
         adresseEmail: '',
         couleurCeinture: '',
         poids: '',
-        genre: ''
+        genre: '',
+        droitImage: null
     })
 
     useEffect(() => {
@@ -53,7 +54,8 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                 adresseEmail: donnees.adherent.adresseEmail || '',
                 couleurCeinture: donnees.adherent.couleurCeinture || '',
                 poids: donnees.adherent.poids || '',
-                genre: donnees.adherent.genre || ''
+                genre: donnees.adherent.genre || '',
+                droitImage: donnees.adherent.droitImage
             })
         } else {
             setAdherentData({

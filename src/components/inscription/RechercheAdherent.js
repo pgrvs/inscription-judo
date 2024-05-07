@@ -74,13 +74,15 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                 adresseEmail: adherent.email,
                 couleurCeinture: adherent.array_options.options_couleurdelaceinture,
                 poids: adherent.array_options.options_poidsenkilogramme,
-                genre: adherent.array_options.options_genre
+                genre: adherent.array_options.options_genre,
+                droitImage: adherent.array_options.options_droitimage
             }
             responsablesAPI = await getResponsablesByIdAdherent(idAdherent)
             if (responsablesAPI.length > 0){
                 responsablesAPI.forEach((responsable) => {
                     let responsableData = {}
                     responsableData = {
+                        id : responsable.id,
                         prenom : responsable.firstname,
                         nom : responsable.lastname,
                         rue: responsable.address,
