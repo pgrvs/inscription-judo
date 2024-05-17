@@ -25,12 +25,12 @@ const BarreEtapes = ({ isMajeur }) => {
         <div className="barreEtapes">
             {etapes.map((etape, index) => {
                 // Déterminer la classe à appliquer à chaque étape
-                let stepClass = 'barreEtapNonFais'
+                let stepClass = 'barreEtapeNonFaite'
 
                 if (index < currentStepIndex) {
-                    stepClass = 'barreEtapFais'
+                    stepClass = 'barreEtapeFaite'
                 } else if (index === currentStepIndex) {
-                    stepClass = 'barreEtapEnCours'
+                    stepClass = 'barreEtapeEnCours'
                 }
 
                 return (

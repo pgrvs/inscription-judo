@@ -6,6 +6,7 @@ import ConfirmationModal from "../ConfiramtionModal"
 import BarreEtapes from "./BarreEtapes"
 
 const getDefaultCategory = (age, categories) => {
+    if (age === 5) return categories.find((cat) => cat.label === 'Moustique')
     if (age >= 6 && age <= 7) return categories.find((cat) => cat.label === 'Mini-poussins')
     if (age >= 8 && age <= 9) return categories.find((cat) => cat.label === 'Poussins')
     if (age >= 10 && age <= 11) return categories.find((cat) => cat.label === 'Benjamins')
@@ -23,6 +24,7 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
     const [paiement, setPaiement] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [newCategory, setNewCategory] = useState(null)
+    const [loading, setLoading] = useState(false)
     const [erreurs, setErreurs] = useState({
         categorie: '',
         paiement: ''
@@ -33,6 +35,7 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
     }, [])
 
     const fetchCategories = async () => {
+        setLoading(true)
         try {
             const results = await getCategorieLicence()
             setCategories(results)
@@ -43,6 +46,7 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
         } catch (error) {
             console.error('Erreur lors de la recherche des catégories:', error)
         }
+        setLoading(false)
     }
 
     const valider = () => {
@@ -107,54 +111,62 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
             <Navigation
                 partieActuelle={1}
                 afficherPartie={1}
-                lienVersPagePrecedente={'/nouvelAdherent/etat-sante'}
+                lienVersPagePrecedente={'/nouvel-adherent/etat-sante'}
             />
             <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
             <h2>Formulaire de Cotisation</h2>
-            <div>
-                <label htmlFor="category">Catégorie :</label>
-                <select
-                    id="category"
-                    onChange={handleCategoryChange}
-                    value={selectedCategorie ? selectedCategorie.id : ''}
-                >
-                    <option value="">Sélectionnez une catégorie</option>
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                            {category.label}
-                        </option>
-                    ))}
-                </select>
-                {erreurs.categorie && <span style={{ color: 'red' }}>{erreurs.categorie}</span>}
-            </div>
+            { loading
+                ? <p>Recherche en cours...</p>
+                : <>
+                    <div>
+                        <label htmlFor="category">Catégorie :</label>
+                        <select
+                            id="category"
+                            onChange={handleCategoryChange}
+                            value={selectedCategorie ? selectedCategorie.id : ''}
+                        >
+                            <option value="">Sélectionnez une catégorie</option>
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.id}>
+                                    {category.label}
+                                </option>
+                            ))}
+                        </select>
+                        {erreurs.categorie && <span style={{color: 'red'}}>{erreurs.categorie}</span>}
+                    </div>
 
-            {selectedCategorie && (
-                <>
-                    <div>
-                        <p>Montant de la cotisation : {parseFloat(selectedCategorie.price).toFixed(2)} €</p>
-                    </div>
-                    <div>
-                        <label>Nombre de paiements :</label>
-                        <label>
-                            <input type="radio" name="paiement" value="1" checked={paiement === 1} onChange={handlePaiementChange}/>
-                            1 fois
-                        </label>
-                        <label>
-                            <input type="radio" name="paiement" value="2" checked={paiement === 2} onChange={handlePaiementChange}/>
-                            2 fois
-                        </label>
-                        <label>
-                            <input type="radio" name="paiement" value="3" checked={paiement === 3} onChange={handlePaiementChange}/>
-                            3 fois
-                        </label>
-                        {erreurs.paiement && <span style={{ color: 'red' }}>{erreurs.paiement}</span>}
-                    </div>
+                    {selectedCategorie && (
+                        <>
+                            <div>
+                                <p>Montant de la cotisation : {parseFloat(selectedCategorie.price).toFixed(2)} €</p>
+                            </div>
+                            <div>
+                                <label>Nombre de paiements :</label>
+                                <label>
+                                    <input type="radio" name="paiement" value="1" checked={paiement === 1}
+                                           onChange={handlePaiementChange}/>
+                                    1 fois
+                                </label>
+                                <label>
+                                    <input type="radio" name="paiement" value="2" checked={paiement === 2}
+                                           onChange={handlePaiementChange}/>
+                                    2 fois
+                                </label>
+                                <label>
+                                    <input type="radio" name="paiement" value="3" checked={paiement === 3}
+                                           onChange={handlePaiementChange}/>
+                                    3 fois
+                                </label>
+                                {erreurs.paiement && <span style={{color: 'red'}}>{erreurs.paiement}</span>}
+                            </div>
+                        </>
+                    )}
+
+                    <button onClick={() => handleClickSuivant(selectedCategorie, paiement)}>
+                        Suivant
+                    </button>
                 </>
-            )}
-
-            <button onClick={() => handleClickSuivant(selectedCategorie, paiement)}>
-                Suivant
-            </button>
+            }
 
             <ConfirmationModal
                 isOpen={isModalOpen}

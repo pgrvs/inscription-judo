@@ -3,6 +3,7 @@ import {capitalize, isAdherentMajeur, validatePhoneNumber, validateEmail, valida
 import Navigation from "../Navigation"
 import { RouteContext } from '../RouteProvider'
 import BarreEtapes from "./BarreEtapes"
+import Cleave from "cleave.js/react"
 
 const FormulaireAdherent = ({donnees, onSuivant}) => {
     const [partieAffichee, setPartieAffichee] = useState(1)
@@ -36,7 +37,7 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
     })
 
     useEffect(() => {
-        if (previousRoute === '/nouvelAdherent/responsable' || previousRoute === '/nouvelAdherent/etat-sante') {
+        if (previousRoute === '/nouvel-adherent/responsable' || previousRoute === '/nouvel-adherent/etat-sante') {
             setPartieAffichee(4)
         }
     }, [previousRoute]);
@@ -75,6 +76,17 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
             setErreurs({ ...erreurs, [name]: '' })
         }
     }
+
+    const onPhoneChange = (e) => {
+        const { name, value } = e.target
+        const numTelephoneSansEspace = value.replace(/ /g, "")
+        setAdherentData({ ...adherentData, numeroTelephone: numTelephoneSansEspace })
+        if (erreurs[name]) {
+            // Efface l'erreur pour ce champ si valide
+            setErreurs({ ...erreurs, [name]: '' })
+        }
+    }
+
 
     const handleChangePrenom = (e) => {
         const { name, value } = e.target
@@ -173,7 +185,7 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
             <Navigation
                 partieActuelle={partieAffichee}
                 afficherPartie={afficherPartie}
-                lienVersPagePrecedente={'/nouvelAdherent'}
+                lienVersPagePrecedente={'/nouvel-adherent'}
             />
             <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
             {partieAffichee === 1 && (
@@ -216,7 +228,6 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                         <input type="text" name="ville" value={adherentData.ville} onChange={handleChange} />
                         {erreurs.ville && <span style={{ color: 'red' }}>{erreurs.ville}</span>}
                     </label>
-                    <button type="button" onClick={() => afficherPartie(1)}>Précédent</button>
                     <button type="button" onClick={() => afficherPartie(3)}>Suivant</button>
                 </fieldset>
             )}
@@ -226,7 +237,17 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                     <legend>Coordonnées</legend>
                     <label>
                         Numéro de téléphone:
-                        <input type="text" name="numeroTelephone" value={adherentData.numeroTelephone} onChange={handleChange} />
+                        <Cleave
+                            placeholder="09 08 76 54 32"
+                            options={{
+                                blocks: [2, 2, 2, 2, 2],
+                                delimiter: " ",
+                            }}
+                            onChange={onPhoneChange}
+                            className="form-field"
+                            name="numeroTelephone"
+                            value={adherentData.numeroTelephone}
+                        />
                         {erreurs.numeroTelephone && <span style={{ color: 'red' }}>{erreurs.numeroTelephone}</span>}
                     </label>
                     <label>
@@ -234,7 +255,6 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                         <input type="email" name="adresseEmail" value={adherentData.adresseEmail} onChange={handleChange} />
                         {erreurs.adresseEmail && <span style={{ color: 'red' }}>{erreurs.adresseEmail}</span>}
                     </label>
-                    <button type="button" onClick={() => afficherPartie(2)}>Précédent</button>
                     <button type="button" onClick={() => afficherPartie(4)}>Suivant</button>
                 </fieldset>
             )}
@@ -262,7 +282,6 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                         </select>
                         {erreurs.genre && <span style={{ color: 'red' }}>{erreurs.genre}</span>}
                     </label>
-                    <button type="button" onClick={() => afficherPartie(3)}>Précédent</button>
                     <button type="button" onClick={() => handleClickSuivant()}>Enregistrer</button>
                 </fieldset>
             )}

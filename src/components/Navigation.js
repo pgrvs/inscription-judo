@@ -1,5 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import RetourAccueil from "../assets/RetourAccueil"
+import FlecheRetour from "../assets/FlecheRetour"
+import './../styles/navigation.scss'
+import './../styles/globale.scss'
 
 const Navigation = ({ partieActuelle, afficherPartie, lienVersPagePrecedente }) => {
     const navigate = useNavigate()
@@ -7,7 +11,6 @@ const Navigation = ({ partieActuelle, afficherPartie, lienVersPagePrecedente }) 
     const handleHome = () => {
         navigate('/')
     }
-
     const handleRetour = () => {
         if (partieActuelle === 1) {
             navigate(lienVersPagePrecedente)
@@ -17,10 +20,10 @@ const Navigation = ({ partieActuelle, afficherPartie, lienVersPagePrecedente }) 
     }
 
     return (
-        <div>
-            <button onClick={handleHome}>Home</button>
-            <button onClick={handleRetour}>Retour</button>
-        </div>
+        <>
+            <button className="button-retour accueil" onClick={handleHome}><RetourAccueil width="35" height="35"/></button>
+            <button className="button-retour fleche-retour" onClick={handleRetour}><FlecheRetour width="35" height="35"/></button>
+        </>
     )
 }
 

@@ -79,14 +79,47 @@ const informationsRecevoirParMailToString = (informations) => {
 
     // Transformer les indices en chaîne de caractères séparée par des virgules
     return trueEntries.join(',')
-};
+}
 
-const calculeAnneeLicenciee = (categorieCotisation) => {
+const informationsRecevoirParMailToObject = (indices) => {
+    if (indices === null){
+        return {
+            factures: false,
+            legales: false,
+            sportives: false
+        }
+    }
+
+    const keys = ['factures', 'legales', 'sportives']
+
+    const informations = {}
+
+    indices.split(',').forEach(indexStr => {
+        // Convertir l'indice en nombre
+        const index = parseInt(indexStr.trim(), 10)
+        // Vérifier si l'indice est valide
+        if (index >= 1 && index <= keys.length) {
+            // Récupérer la clé correspondant à l'indice et définir sa valeur sur true
+            informations[keys[index - 1]] = true
+        }
+    })
+
+    // Remplir les clés manquantes avec des valeurs false
+    keys.forEach(key => {
+        if (!(key in informations)) {
+            informations[key] = false
+        }
+    })
+
+    return informations
+}
+
+const calculeAnneeLicenciee = () => {
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth()
 
-    if (month < 5 ) {
+    if (month < 6 ) {
         return (year-1) + '-' + (year)
     }
     return year + '-' + (year+1)
@@ -94,24 +127,26 @@ const calculeAnneeLicenciee = (categorieCotisation) => {
 
 const categoryForDolibarr = (categorieLabel) => {
     switch (categorieLabel) {
-        case ('Mini-poussins') :
+        case ('Moustique') :
             return '1'
-        case ('Poussins') :
+        case ('Mini-poussins') :
             return '2'
-        case ('Benjamins') :
+        case ('Poussins') :
             return '3'
-        case ('Minimes') :
+        case ('Benjamins') :
             return '4'
-        case ('Cadets') :
+        case ('Minimes') :
             return '5'
-        case ('Junior') :
+        case ('Cadets') :
             return '6'
-        case ('Sénior') :
+        case ('Junior') :
             return '7'
-        case ('Vétérans') :
+        case ('Sénior') :
             return '8'
-        case ('Handi Judo') :
+        case ('Vétérans') :
             return '9'
+        case ('Handi Judo') :
+            return '10'
         default:
             return null
     }
@@ -154,6 +189,7 @@ export {
     isAdherentMajeur,
     calculerAge,
     informationsRecevoirParMailToString,
+    informationsRecevoirParMailToObject,
     calculeAnneeLicenciee,
     categoryForDolibarr,
     validatePhoneNumber,

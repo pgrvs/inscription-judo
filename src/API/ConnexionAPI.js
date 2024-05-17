@@ -24,11 +24,9 @@ class ConnexionAPI {
         } else if (data) {
             url += '?' + new URLSearchParams(data).toString()
         }
-
         try {
             return await fetch(url, options)
         } catch (error) {
-            console.log(url, options)
             console.error('Error fetching data:', error)
             throw error
         }

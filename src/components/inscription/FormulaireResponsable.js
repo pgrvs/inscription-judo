@@ -3,6 +3,7 @@ import {capitalize, validatePhoneNumber, validateEmail, validateCodePostal} from
 import Navigation from '../Navigation'
 import GestionnaireResponsables from "./GestionnaireResponsables"
 import BarreEtapes from "./BarreEtapes"
+import Cleave from "cleave.js/react"
 
 const FormulaireResponsable = ({ donnees, onSuivant }) => {
     const [indexResponsableActif, setIndexResponsableActif] = useState(0)
@@ -62,7 +63,8 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
         }
         else if (name.includes('numeroTelephone')) {
             const telephoneIndex = parseInt(name.split('_')[1])
-            updatedResponsables[indexResponsableActif].numeroTelephone[telephoneIndex] = value
+            const numTelephoneSansEspace = value.replace(/ /g, "")
+            updatedResponsables[indexResponsableActif].numeroTelephone[telephoneIndex] = numTelephoneSansEspace
         }
         else if (name.includes('prenom')) {
             updatedResponsables[indexResponsableActif].prenom = capitalize(e.target.value)
@@ -151,7 +153,7 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
             <Navigation
                 partieActuelle={partieAffichee}
                 afficherPartie={afficherPartie}
-                lienVersPagePrecedente={'/nouvelAdherent/adherent'}
+                lienVersPagePrecedente={'/nouvel-adherent/adherent'}
             />
             <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
             {partieAffichee === 1 && (
@@ -197,7 +199,6 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                         <input type="text" name="ville" onChange={handleChange} value={responsableActif.ville}/>
                         {erreurs.ville && <span style={{ color: 'red' }}>{erreurs.ville}</span>}
                     </label>
-                    <button type="button" onClick={() => afficherPartie(2)}>Précédent</button>
                     <button type="button" onClick={() => afficherPartie(4)}>Suivant</button>
                 </fieldset>
             )}
@@ -206,14 +207,36 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                 <fieldset>
                     <label>
                         Téléphone 1:
-                        <input type="text" name="numeroTelephone_0" value={responsableActif.numeroTelephone[0]}
-                               onChange={handleChange}/>
+                        <Cleave
+                            placeholder="09 08 76 54 32"
+                            options={{
+                                blocks: [2, 2, 2, 2, 2],
+                                delimiter: " ",
+                            }}
+                            onChange={handleChange}
+                            className="form-field"
+                            name="numeroTelephone_0"
+                            value={responsableActif.numeroTelephone[0]}
+                        />
+                        {/*<input type="text" name="numeroTelephone_0" value={responsableActif.numeroTelephone[0]}
+                               onChange={handleChange}/>*/}
                         {erreurs.numeroTelephone1 && <span style={{ color: 'red' }}>{erreurs.numeroTelephone1}</span>}
                     </label>
                     <label>
                         Téléphone 2:
-                        <input type="text" name="numeroTelephone_1" value={responsableActif.numeroTelephone[1]}
-                               onChange={handleChange}/>
+                        <Cleave
+                            placeholder="09 08 76 54 32"
+                            options={{
+                                blocks: [2, 2, 2, 2, 2],
+                                delimiter: " ",
+                            }}
+                            onChange={handleChange}
+                            className="form-field"
+                            name="numeroTelephone_1"
+                            value={responsableActif.numeroTelephone[1]}
+                        />
+                        {/*<input type="text" name="numeroTelephone_1" value={responsableActif.numeroTelephone[1]}
+                               onChange={handleChange}/>*/}
                         {erreurs.numeroTelephone2 && <span style={{ color: 'red' }}>{erreurs.numeroTelephone2}</span>}
                     </label>
                     <label>
@@ -222,7 +245,6 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                                onChange={handleChange}/>
                         {erreurs.adresseEmail && <span style={{color: 'red'}}>{erreurs.adresseEmail}</span>}
                     </label>
-                    <button type="button" onClick={() => afficherPartie(3)}>Précédent</button>
                     <button type="button" onClick={() => afficherPartie(5)}>Suivant</button>
                 </fieldset>
             )}
@@ -249,7 +271,6 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                         Informations sportives
                     </label>
                     <br/>
-                    <button type="button" onClick={() => afficherPartie(4)}>Précédent</button>
                     <button type="button" onClick={() => afficherPartie(1)}>Suivant</button>
                 </fieldset>
             )}

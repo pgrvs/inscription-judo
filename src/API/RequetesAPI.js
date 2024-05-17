@@ -1,7 +1,7 @@
 import ConnexionAPI from "./ConnexionAPI"
 import {
     informationsRecevoirParMailToString,
-    calculeAnneeLicenciee, calculeDerniereAnneeLicenciee, categoryForDolibarr
+    calculeAnneeLicenciee, categoryForDolibarr
 } from "../common/utils"
 
 const rechercheAdherents = async (prenom, nom, numeroLicence) => {
@@ -26,6 +26,31 @@ const rechercheAdherents = async (prenom, nom, numeroLicence) => {
         console.error('Erreur lors de la recherche', error)
     }
 }
+
+const getAdherentsByDateInscriptionByCategorie = async (categorie) => {
+    const api = new ConnexionAPI()
+
+    const date = new Date()
+    let year = date.getFullYear()
+    const month = date.getMonth()
+
+    if (month < 6) {
+        year = year - 1
+    }
+
+    const filter = `sqlfilters=((ef.datedinscription:>:'${year}-08-01') and (ef.categorie:=:'${categoryForDolibarr(categorie.label)}') and ((ef.certificatmdicale:=:'2') or (ef.certificatmdicale:=:'3')))`
+    // exemple : ((ef.datedinscription:>:'2023-08-01') and (ef.categorie:=:'2') and ((ef.certificatmdicale:=:'2') or (ef.certificatmdicale:=:'3')))
+    try {
+        const response = await api.callAPI(
+            'GET',
+            'thirdparties',
+            filter)
+        return await response.json()
+    } catch (error) {
+        console.error('Erreur lors de la requête getAdherentsByAge :', error)
+    }
+}
+
 
 const getResponsablesByIdAdherent = async (idAdherent) => {
     const api = new ConnexionAPI()
@@ -107,7 +132,7 @@ const updateAdherent = async (idAdherent, adherentData, etatSante, cotisation) =
     const api = new ConnexionAPI()
 
     const certificatmedicale = etatSante ? 2 : 1
-    const droitImage = adherentData.droitImage ? true : false
+    const droitImage = adherentData.droitImage ? true : null
 
     const adherent = {
         'name' : adherentData.nom + ' ' + adherentData.prenom,
@@ -130,6 +155,7 @@ const updateAdherent = async (idAdherent, adherentData, etatSante, cotisation) =
         "client": "1",
     }
 
+    console.log('adherent', adherent)
     try {
         const response = await api.callAPI(
             'PUT',
@@ -192,6 +218,7 @@ const addResponsableToAdherent = async (idAdherent, responsableData) => {
 
 const updateResponsableToAdherent = async (idAdherent, responsableData) => {
     const api = new ConnexionAPI()
+    console.log(responsableData)
 
     const responsable = {
         'lastname' : responsableData.nom,
@@ -296,12 +323,28 @@ const createPdfFacture = async (ref) => {
         return  await response.json()
 
     } catch (error) {
-        console.error('Erreur lors de la requête createPdfFacture :', error)
+        console.error('Erreur lors de la requête createPdfFacture : ', error)
+    }
+}
+
+const downloadDocument = async (module, lienFichier) => {
+    const api = new ConnexionAPI()
+
+    try {
+        const response = await api.callAPI(
+            'GET',
+            'documents/download?modulepart=' + module + '&original_file=' + lienFichier
+        )
+        return  await response.json()
+
+    } catch (error) {
+        console.error('Erreur lors de la requête downloadDocument : ', error)
     }
 }
 
 export {
     rechercheAdherents,
+    getAdherentsByDateInscriptionByCategorie,
     getResponsablesByIdAdherent,
     getCategorieLicence,
     addAdherent,
@@ -311,5 +354,6 @@ export {
     updateResponsableToAdherent,
     createFacture,
     validateFacture,
-    createPdfFacture
+    createPdfFacture,
+    downloadDocument
 }

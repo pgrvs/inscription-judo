@@ -31,20 +31,20 @@ const GestionnaireFormulairesAdherent = () => {
         let steps = []
         if(isAdherentMajeur){
             steps = [
-                '/nouvelAdherent',
-                '/nouvelAdherent/adherent',
-                '/nouvelAdherent/etat-sante',
-                '/nouvelAdherent/cotisation',
-                '/nouvelAdherent/fin',
+                '/nouvel-adherent',
+                '/nouvel-adherent/adherent',
+                '/nouvel-adherent/etat-sante',
+                '/nouvel-adherent/cotisation',
+                '/nouvel-adherent/fin',
             ]
         } else {
             steps = [
-                '/nouvelAdherent',
-                '/nouvelAdherent/adherent',
-                '/nouvelAdherent/responsable',
-                '/nouvelAdherent/etat-sante',
-                '/nouvelAdherent/cotisation',
-                '/nouvelAdherent/fin',
+                '/nouvel-adherent',
+                '/nouvel-adherent/adherent',
+                '/nouvel-adherent/responsable',
+                '/nouvel-adherent/etat-sante',
+                '/nouvel-adherent/cotisation',
+                '/nouvel-adherent/fin',
             ]
         }
 

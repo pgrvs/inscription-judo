@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {rechercheAdherents, getResponsablesByIdAdherent} from "../../API/RequetesAPI"
 import Navigation from '../Navigation'
-import {splitName, convertTimestampToDate, capitalize} from "../../common/utils"
+import {splitName, convertTimestampToDate, capitalize, informationsRecevoirParMailToObject} from "../../common/utils"
+import './../../styles/recherche-adherent.scss'
+import './../../styles/globale.scss'
 
 const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
     const [nom, setNom] = useState('')
@@ -88,13 +90,9 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                         rue: responsable.address,
                         codePostal: responsable.zip,
                         ville: responsable.town,
-                        numeroTelephone: [responsable.phone_mobile, responsable.phone_perso],
+                        numeroTelephone: [responsable.phone_perso, responsable.phone_mobile],
                         adresseEmail: responsable.mail,
-                        informations: {
-                            factures: false,
-                            legales: false,
-                            sportives: false
-                        }
+                        informations: informationsRecevoirParMailToObject(responsable.array_options.options_recevoirparmail)
                     }
                     responsables.push(responsableData)
                 })

@@ -10,7 +10,7 @@ const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
     const previousRoute = useContext(RouteContext)
 
     useEffect(() => {
-        if (previousRoute === '/nouvelAdherent/cotisation') {
+        if (previousRoute === '/nouvel-adherent/cotisation') {
             setPartieAffichee(3)
         }
     }, [previousRoute])
@@ -34,13 +34,13 @@ const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
                 <Navigation
                     partieActuelle={partieAffichee}
                     afficherPartie={afficherPartie}
-                    lienVersPagePrecedente={'/nouvelAdherent/adherent'}
+                    lienVersPagePrecedente={'/nouvel-adherent/adherent'}
                 />
                 :
                 <Navigation
                     partieActuelle={partieAffichee}
                     afficherPartie={afficherPartie}
-                    lienVersPagePrecedente={'/nouvelAdherent/responsable'}
+                    lienVersPagePrecedente={'/nouvel-adherent/responsable'}
                 />
             }
             <BarreEtapes isMajeur={isAdherentMajeur}/>
