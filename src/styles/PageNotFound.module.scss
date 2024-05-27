@@ -1,0 +1,38 @@
+@use "./modules/colors";
+@use "./modules/fonts";
+
+
+.divPageNotFound{
+  width: 100vw;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  p{
+    font-size: 1.3em;
+  }
+}
+
+.retourAccueil{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: colors.$text-sombre;
+  background-color: colors.$background-clair;
+  border-radius: 20px;
+  border: 0;
+  padding: 10px;
+  box-shadow: 0 0 3 colors.$ombre;
+  transition: 200ms;
+
+  p{
+    margin: 5px 10px;
+  }
+}
+
+.retourAccueil:hover{
+  transition: 200ms;
+  box-shadow: 0 0 20px colors.$ombre;
+}

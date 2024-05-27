@@ -4,6 +4,7 @@ import Navigation from "../Navigation"
 import { RouteContext } from '../RouteProvider'
 import BarreEtapes from "./BarreEtapes"
 import Cleave from "cleave.js/react"
+import style from "../../styles/inscription/FormulaireAdherent.module.scss"
 
 const FormulaireAdherent = ({donnees, onSuivant}) => {
     const [partieAffichee, setPartieAffichee] = useState(1)
@@ -56,7 +57,8 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                 couleurCeinture: donnees.adherent.couleurCeinture || '',
                 poids: donnees.adherent.poids || '',
                 genre: donnees.adherent.genre || '',
-                droitImage: donnees.adherent.droitImage
+                droitImage: donnees.adherent.droitImage,
+                numroAdhrent : donnees.adherent.numroAdhrent
             })
         } else {
             setAdherentData({
@@ -187,104 +189,131 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                 afficherPartie={afficherPartie}
                 lienVersPagePrecedente={'/nouvel-adherent'}
             />
-            <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
-            {partieAffichee === 1 && (
-                <fieldset>
-                    <legend>Informations personnelles</legend>
-                    <label>
-                        Nom :
-                        <input type="text" name="nom" value={adherentData.nom} onChange={handleChangeNom}/>
-                        {erreurs.nom && <span style={{ color: 'red' }}>{erreurs.nom}</span>}
-                    </label>
-                    <label>
-                        Prénom:
-                        <input type="text" name="prenom" value={adherentData.prenom} onChange={handleChangePrenom}/>
-                        {erreurs.prenom && <span style={{ color: 'red' }}>{erreurs.prenom}</span>}
-                    </label>
-                    <label>
-                        Date de naissance:
-                        <input type="date" name="dateDeNaissance" value={adherentData.dateDeNaissance} onChange={handleChange} />
-                        {erreurs.dateDeNaissance && <span style={{ color: 'red' }}>{erreurs.dateDeNaissance}</span>}
-                    </label>
-                    <button type="button" onClick={() => afficherPartie(2)}>Suivant</button>
-                </fieldset>
-            )}
+            <div className="container">
+                <div>
+                    <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
+                    <div className={"encadrementPrincipal"}>
+                        <div className={"containerForm"}>
+                            {partieAffichee === 1 && (
+                                <>
+                                    <legend>Informations personnelles</legend>
+                                    <label>Nom :</label>
+                                    <input type="text" name="nom" value={adherentData.nom} onChange={handleChangeNom}/>
+                                    {erreurs.nom && <span className={"erreur"}>{erreurs.nom}</span>}
 
-            {partieAffichee === 2 && (
-                <fieldset>
-                    <legend>Adresse</legend>
-                    <label>
-                        Rue:
-                        <input type="text" name="rue" value={adherentData.rue} onChange={handleChange} />
-                        {erreurs.rue && <span style={{ color: 'red' }}>{erreurs.rue}</span>}
-                    </label>
-                    <label>
-                        Code Postal:
-                        <input type="text" name="codePostal" value={adherentData.codePostal} onChange={handleChange} />
-                        {erreurs.codePostal && <span style={{ color: 'red' }}>{erreurs.codePostal}</span>}
-                    </label>
-                    <label>
-                        Ville:
-                        <input type="text" name="ville" value={adherentData.ville} onChange={handleChange} />
-                        {erreurs.ville && <span style={{ color: 'red' }}>{erreurs.ville}</span>}
-                    </label>
-                    <button type="button" onClick={() => afficherPartie(3)}>Suivant</button>
-                </fieldset>
-            )}
+                                    <label>Prénom :</label>
+                                    <input type="text" name="prenom" value={adherentData.prenom}
+                                           onChange={handleChangePrenom}/>
+                                    {erreurs.prenom && <span className={"erreur"}>{erreurs.prenom}</span>}
 
-            {partieAffichee === 3 && (
-                <fieldset>
-                    <legend>Coordonnées</legend>
-                    <label>
-                        Numéro de téléphone:
-                        <Cleave
-                            placeholder="09 08 76 54 32"
-                            options={{
-                                blocks: [2, 2, 2, 2, 2],
-                                delimiter: " ",
-                            }}
-                            onChange={onPhoneChange}
-                            className="form-field"
-                            name="numeroTelephone"
-                            value={adherentData.numeroTelephone}
-                        />
-                        {erreurs.numeroTelephone && <span style={{ color: 'red' }}>{erreurs.numeroTelephone}</span>}
-                    </label>
-                    <label>
-                        Adresse email:
-                        <input type="email" name="adresseEmail" value={adherentData.adresseEmail} onChange={handleChange} />
-                        {erreurs.adresseEmail && <span style={{ color: 'red' }}>{erreurs.adresseEmail}</span>}
-                    </label>
-                    <button type="button" onClick={() => afficherPartie(4)}>Suivant</button>
-                </fieldset>
-            )}
+                                    <label>Date de naissance :</label>
+                                    <input type="date" name="dateDeNaissance" value={adherentData.dateDeNaissance}
+                                           onChange={handleChange}/>
+                                    {erreurs.dateDeNaissance &&
+                                        <span className={"erreur"}>{erreurs.dateDeNaissance}</span>}
 
-            {partieAffichee === 4 && (
-                <fieldset>
-                    <legend>Informations supplémentaires</legend>
-                    <label>
-                        Couleur de ceinture:
-                        <input type="text" name="couleurCeinture" value={adherentData.couleurCeinture}
-                               onChange={handleChange}/>
-                        {erreurs.couleurCeinture && <span style={{ color: 'red' }}>{erreurs.couleurCeinture}</span>}
-                    </label>
-                    <label>
-                        Poids:
-                        <input type="text" name="poids" value={adherentData.poids} onChange={handleChange}/>
-                        {erreurs.poids && <span style={{ color: 'red' }}>{erreurs.poids}</span>}
-                    </label>
-                    <label>
-                        Genre:
-                        <select name="genre" value={adherentData.genre} onChange={handleChange}>
-                            <option value={null}>Selectionné un genre</option>
-                            <option value="1">Masculin</option>
-                            <option value="2">Féminin</option>
-                        </select>
-                        {erreurs.genre && <span style={{ color: 'red' }}>{erreurs.genre}</span>}
-                    </label>
-                    <button type="button" onClick={() => handleClickSuivant()}>Enregistrer</button>
-                </fieldset>
-            )}
+                                    <button className={"buttonSuivant"} type="button"
+                                            onClick={() => afficherPartie(2)}>Suivant
+                                    </button>
+                                </>
+                            )}
+
+                            {partieAffichee === 2 && (
+                                <>
+                                    <legend>Adresse</legend>
+                                    <label>Rue :</label>
+                                    <input type="text" name="rue" value={adherentData.rue} onChange={handleChange} />
+                                    {erreurs.rue && <span className={"erreur"}>{erreurs.rue}</span>}
+
+                                    <label>Code Postal :</label>
+                                    <input type="text" name="codePostal" value={adherentData.codePostal} onChange={handleChange} />
+                                    {erreurs.codePostal && <span className={"erreur"}>{erreurs.codePostal}</span>}
+
+                                    <label>Ville :</label>
+                                    <input type="text" name="ville" value={adherentData.ville} onChange={handleChange} />
+                                    {erreurs.ville && <span className={"erreur"}>{erreurs.ville}</span>}
+
+                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(3)}>Suivant</button>
+                                </>
+                            )}
+
+                            {partieAffichee === 3 && (
+                                <>
+                                    <legend>Coordonnées</legend>
+                                    <label>Numéro de téléphone :</label>
+                                    <Cleave
+                                        placeholder="09 08 76 54 32"
+                                        options={{
+                                            blocks: [2, 2, 2, 2, 2],
+                                            delimiter: " ",
+                                        }}
+                                        onChange={onPhoneChange}
+                                        className="form-field"
+                                        name="numeroTelephone"
+                                        value={adherentData.numeroTelephone}
+                                    />
+                                    {erreurs.numeroTelephone && <span className={"erreur"}>{erreurs.numeroTelephone}</span>}
+
+                                    <label>Adresse email :</label>
+                                    <input type="email" name="adresseEmail" value={adherentData.adresseEmail} onChange={handleChange} />
+                                    {erreurs.adresseEmail && <span className={"erreur"}>{erreurs.adresseEmail}</span>}
+
+                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(4)}>Suivant</button>
+                                </>
+                            )}
+
+                            {partieAffichee === 4 && (
+                                <>
+                                    <legend>Informations supplémentaires</legend>
+                                    <label>Couleur de ceinture :</label>
+                                    <input type="text" name="couleurCeinture" value={adherentData.couleurCeinture} onChange={handleChange}/>
+                                    {erreurs.couleurCeinture && <span className={"erreur"}>{erreurs.couleurCeinture}</span>}
+
+                                    <label>Poids :</label>
+                                    <div className={style.divPoids}>
+                                        <input type="text" name="poids" value={adherentData.poids} onChange={handleChange}/>
+                                        <p>Kg</p>
+                                    </div>
+                                    {erreurs.poids && <span className={"erreur"}>{erreurs.poids}</span>}
+                                    <label>Genre:</label>
+                                    <div className={style.divGenre}>
+                                        <div className={"divInputRadio"}>
+                                            <input
+                                                className={"inputRadio"}
+                                                type="radio"
+                                                id="masculin"
+                                                name="genre"
+                                                value="1"
+                                                checked={adherentData.genre === "1"}
+                                                onChange={handleChange}
+                                            />
+                                            <label htmlFor="masculin">Masculin</label>
+                                        </div>
+                                        <div className={"divInputRadio"}>
+                                            <input
+                                                className={"inputRadio"}
+                                                type="radio"
+                                                id="feminin"
+                                                name="genre"
+                                                value="2"
+                                                checked={adherentData.genre === "2"}
+                                                onChange={handleChange}
+                                            />
+                                            <label htmlFor="feminin">Féminin</label>
+                                        </div>
+                                    </div>
+
+                                    {erreurs.genre && <span className={"erreur"}>{erreurs.genre}</span>}
+
+                                    <button className={"buttonSuivant"} type="button" onClick={() => handleClickSuivant()}>
+                                        Suivant
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

@@ -4,6 +4,8 @@ import Navigation from '../Navigation'
 import GestionnaireResponsables from "./GestionnaireResponsables"
 import BarreEtapes from "./BarreEtapes"
 import Cleave from "cleave.js/react"
+import style from "../../styles/inscription/FormulaireResponsable.module.scss"
+import AjoutAdherent from "../../assets/AjoutAdherent";
 
 const FormulaireResponsable = ({ donnees, onSuivant }) => {
     const [indexResponsableActif, setIndexResponsableActif] = useState(0)
@@ -155,125 +157,128 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                 afficherPartie={afficherPartie}
                 lienVersPagePrecedente={'/nouvel-adherent/adherent'}
             />
-            <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
-            {partieAffichee === 1 && (
-                <>
-                    <GestionnaireResponsables responsables={responsables} indexResponsbale={formGestionnaireResponsbale}/>
-                    <button onClick={ajouterResponsable}>Ajouter un responsable</button>
-                    <button type="button" onClick={handleSuivant}>Non, passé à la suite</button>
-                    {erreurs.responsable && <span style={{ color: 'red' }}>{erreurs.responsable}</span>}
-                </>
-            )}
-            {partieAffichee === 2 && (
-                <fieldset>
-                    <legend>Responsable #{indexResponsableActif + 1}</legend>
-                    <label>
-                        Nom:
-                        <input type="text" name="nom" value={responsableActif.nom} onChange={handleChange}/>
-                        {erreurs.nom && <span style={{ color: 'red' }}>{erreurs.nom}</span>}
-                    </label>
-                    <label>
-                        Prénom:
-                        <input type="text" name="prenom" value={responsableActif.prenom} onChange={handleChange}/>
-                        {erreurs.prenom && <span style={{ color: 'red' }}>{erreurs.prenom}</span>}
-                    </label>
-                    <button type="button" onClick={() => afficherPartie(3)}>Suivant</button>
-                </fieldset>
-            )}
+            <div className="container">
+                <div>
+                    <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
+                    <div className={"encadrementPrincipal"}>
+                        {partieAffichee === 1 && (
+                            <>
+                                <h2>{donnees.responsables.length > 1 ? 'Responsables' : 'Responsable'} de {donnees.adherent.prenom} :</h2>
+                                <GestionnaireResponsables responsables={responsables} indexResponsbale={formGestionnaireResponsbale}/>
+                                {erreurs.responsable && <span className={"erreur"}>{erreurs.responsable}</span>}
+                                <div className={style.buttonResponsable}>
+                                    <button className={"buttonNoir"} onClick={ajouterResponsable}>
+                                        <AjoutAdherent className={"iconeAjout"} alt="Ajout adherent"/>
+                                        <p>Créer un nouveau responsable</p>
+                                    </button>
+                                    <button className={"buttonNoir"} type="button" onClick={handleSuivant}>
+                                        <p>Passer à la suite</p>
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                        <div className={"containerForm"}>
+                            {partieAffichee === 2 && (
+                                <>
+                                    <legend>Responsable n°{indexResponsableActif + 1}</legend>
+                                    <label>Nom </label>
+                                        <input type="text" name="nom" value={responsableActif.nom} onChange={handleChange}/>
+                                        {erreurs.nom && <span className={"erreur"}>{erreurs.nom}</span>}
+                                    <label>Prénom :</label>
+                                    <input type="text" name="prenom" value={responsableActif.prenom} onChange={handleChange}/>
+                                    {erreurs.prenom && <span className={"erreur"}>{erreurs.prenom}</span>}
 
-            {partieAffichee === 3 && (
-                <fieldset>
-                    <label>
-                        Rue:
-                        <input type="text" name="rue" value={responsableActif.rue} onChange={handleChange}/>
-                        {erreurs.rue && <span style={{ color: 'red' }}>{erreurs.rue}</span>}
-                    </label>
-                    <label>
-                        Code Postal:
-                        <input type="text" name="codePostal" value={responsableActif.codePostal}
-                               onChange={handleChange}/>
-                        {erreurs.codePostal && <span style={{ color: 'red' }}>{erreurs.codePostal}</span>}
-                    </label>
-                    <label>
-                        Ville:
-                        <input type="text" name="ville" onChange={handleChange} value={responsableActif.ville}/>
-                        {erreurs.ville && <span style={{ color: 'red' }}>{erreurs.ville}</span>}
-                    </label>
-                    <button type="button" onClick={() => afficherPartie(4)}>Suivant</button>
-                </fieldset>
-            )}
+                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(3)}>Suivant</button>
+                                </>
+                            )}
 
-            {partieAffichee === 4 && (
-                <fieldset>
-                    <label>
-                        Téléphone 1:
-                        <Cleave
-                            placeholder="09 08 76 54 32"
-                            options={{
-                                blocks: [2, 2, 2, 2, 2],
-                                delimiter: " ",
-                            }}
-                            onChange={handleChange}
-                            className="form-field"
-                            name="numeroTelephone_0"
-                            value={responsableActif.numeroTelephone[0]}
-                        />
-                        {/*<input type="text" name="numeroTelephone_0" value={responsableActif.numeroTelephone[0]}
-                               onChange={handleChange}/>*/}
-                        {erreurs.numeroTelephone1 && <span style={{ color: 'red' }}>{erreurs.numeroTelephone1}</span>}
-                    </label>
-                    <label>
-                        Téléphone 2:
-                        <Cleave
-                            placeholder="09 08 76 54 32"
-                            options={{
-                                blocks: [2, 2, 2, 2, 2],
-                                delimiter: " ",
-                            }}
-                            onChange={handleChange}
-                            className="form-field"
-                            name="numeroTelephone_1"
-                            value={responsableActif.numeroTelephone[1]}
-                        />
-                        {/*<input type="text" name="numeroTelephone_1" value={responsableActif.numeroTelephone[1]}
-                               onChange={handleChange}/>*/}
-                        {erreurs.numeroTelephone2 && <span style={{ color: 'red' }}>{erreurs.numeroTelephone2}</span>}
-                    </label>
-                    <label>
-                        Adresse email:
-                        <input type="email" name="adresseEmail" value={responsableActif.adresseEmail}
-                               onChange={handleChange}/>
-                        {erreurs.adresseEmail && <span style={{color: 'red'}}>{erreurs.adresseEmail}</span>}
-                    </label>
-                    <button type="button" onClick={() => afficherPartie(5)}>Suivant</button>
-                </fieldset>
-            )}
+                            {partieAffichee === 3 && (
+                                <>
+                                    <label>Rue :</label>
+                                    <input type="text" name="rue" value={responsableActif.rue} onChange={handleChange}/>
+                                    {erreurs.rue && <span className={"erreur"}>{erreurs.rue}</span>}
+                                    <label>Code Postal :</label>
+                                    <input type="text" name="codePostal" value={responsableActif.codePostal} onChange={handleChange}/>
+                                    {erreurs.codePostal && <span className={"erreur"}>{erreurs.codePostal}</span>}
+                                    <label>Ville :</label>
+                                    <input type="text" name="ville" onChange={handleChange} value={responsableActif.ville}/>
+                                    {erreurs.ville && <span className={"erreur"}>{erreurs.ville}</span>}
 
-            {partieAffichee === 5 && (
-                <fieldset>
-                    <label>
-                        Informations à envoyer par email:
-                        <br/>
-                        <input type="checkbox" name="factures" checked={responsableActif.informations.factures}
-                               onChange={handleChange}/>
-                        Factures
-                    </label>
-                        <br/>
-                    <label>
-                        <input type="checkbox" name="legales" checked={responsableActif.informations.legales}
-                               onChange={handleChange}/>
-                        Informations légales
-                        <br/>
-                    </label>
-                    <label>
-                        <input type="checkbox" name="sportives" checked={responsableActif.informations.sportives}
-                               onChange={handleChange}/>
-                        Informations sportives
-                    </label>
-                    <br/>
-                    <button type="button" onClick={() => afficherPartie(1)}>Suivant</button>
-                </fieldset>
-            )}
+                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(4)}>Suivant</button>
+                                </>
+                            )}
+
+                            {partieAffichee === 4 && (
+                                <>
+                                    <label>Téléphone 1 :</label>
+                                    <Cleave
+                                        placeholder="09 08 76 54 32"
+                                        options={{
+                                            blocks: [2, 2, 2, 2, 2],
+                                            delimiter: " ",
+                                        }}
+                                        onChange={handleChange}
+                                        className="form-field"
+                                        name="numeroTelephone_0"
+                                        value={responsableActif.numeroTelephone[0]}
+                                    />
+                                    {/*<input type="text" name="numeroTelephone_0" value={responsableActif.numeroTelephone[0]}
+                           onChange={handleChange}/>*/}
+                                    {erreurs.numeroTelephone1 && <span className={"erreur"}>{erreurs.numeroTelephone1}</span>}
+
+                                    <label>Téléphone 2 :</label>
+                                    <Cleave
+                                        placeholder="09 08 76 54 32"
+                                        options={{
+                                            blocks: [2, 2, 2, 2, 2],
+                                            delimiter: " ",
+                                        }}
+                                        onChange={handleChange}
+                                        className="form-field"
+                                        name="numeroTelephone_1"
+                                        value={responsableActif.numeroTelephone[1]}
+                                    />
+                                    {/*<input type="text" name="numeroTelephone_1" value={responsableActif.numeroTelephone[1]}
+                           onChange={handleChange}/>*/}
+                                    {erreurs.numeroTelephone2 && <span className={"erreur"}>{erreurs.numeroTelephone2}</span>}
+                                    <label>Adresse email :</label>
+                                    <input type="email" name="adresseEmail" value={responsableActif.adresseEmail} onChange={handleChange}/>
+                                    {erreurs.adresseEmail && <span className={"erreur"}>{erreurs.adresseEmail}</span>}
+
+                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(5)}>Suivant</button>
+                                </>
+                            )}
+
+                            {partieAffichee === 5 && (
+                                <>
+                                    <legend>Informations à envoyer par email :</legend>
+                                    <div className={style.divCheckbox}>
+                                        <input type="checkbox" name="factures"
+                                               checked={responsableActif.informations.factures}
+                                               onChange={handleChange}/>
+                                        <label>Factures</label>
+                                    </div>
+                                    <div className={style.divCheckbox}>
+                                        <input type="checkbox" name="legales"
+                                               checked={responsableActif.informations.legales} onChange={handleChange}/>
+                                        <label>Informations légales</label>
+                                    </div>
+                                    <div className={style.divCheckbox}>
+                                        <input type="checkbox" name="sportives"
+                                               checked={responsableActif.informations.sportives}
+                                               onChange={handleChange}/>
+                                        <label>Informations sportives</label>
+                                    </div>
+
+                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(1)}>
+                                        Suivant
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

@@ -1,0 +1,72 @@
+@use "../modules/_colors.scss";
+@use "../modules/_fonts.scss";
+
+.swiperContainer{
+  position: relative;
+  justify-content: center;
+  display: flex;
+}
+
+.swiperDiv{
+  min-height: 110px;
+  margin-top: 20px;
+  width: 46vw;
+  min-width: 300px;
+  background-color: colors.$rose;
+  padding: 9px 0;
+  border-radius: 30px;
+  box-shadow: inset 0 0 18px colors.$ombre;
+}
+
+.messageRecherche{
+  color: colors.$text-clair;
+  font-size: 1.2em;
+}
+
+.buttonNext{
+  color: colors.$background-sombre;
+  right: -28px;
+  top: 57%
+}
+
+.buttonPrev{
+  color: colors.$background-sombre;
+  left: -28px;
+  top: 57%
+}
+
+.swiperContainerCards{
+  border-radius: 18px;
+  padding: 0 7px;
+}
+
+.cardAdherent{
+  height: 100px;
+  width: 93%;
+  background-color: colors.$background-sombre;
+  box-shadow: 0 0 5px colors.$ombre;
+  color: colors.$text-clair;
+  border-radius:20px;
+  border: solid 1.5px colors.$background-sombre;
+  transition: 400ms;
+  margin: 5px;
+  cursor: pointer;
+
+  p{
+    margin: 3px;
+  }
+  .nomAdherent{
+    font-size: 1.1em;
+    font-weight: 600;
+  }
+  .infoAdherent{
+    font-size: 0.8em;
+    margin-top: 7px;
+    font-weight: 300;
+  }
+}
+
+.cardAdherent:hover{
+  border: solid 1.5px colors.$background-clair;
+  transition: 400ms;
+}

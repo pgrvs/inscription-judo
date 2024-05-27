@@ -22,6 +22,7 @@ import {
     textEmailResponsable
 } from "../email/emailText"
 import {render} from '@react-email/render'
+import style from "../../styles/inscription/FormulaireFin.module.scss"
 
 const FormulaireFin = ({donnees}) => {
     const [loading, setLoading] = useState(false)
@@ -237,20 +238,26 @@ const FormulaireFin = ({donnees}) => {
                         afficherPartie={1}
                         lienVersPagePrecedente={'/nouvel-adherent/cotisation'}
                     />
-                    <BarreEtapes isMajeur={isAdherentMajeur}/>
-                    <h3>L'adhérent va recevoir par email :</h3>
-                    <ul>
-                        <li>La facture</li>
-                        <li>Les horaires</li>
-                        <li>L'attestation relatif à l'état de santé (à rentourner)</li>
-                        <li>Les règles autour du certificat médical et/ou des attesations sur l'honneur</li>
-                        <li>Ainsi que des informations sur : </li>
-                        <ul>
-                            <li>L'autorisation du droit à l'image</li>
-                            <li>La situation d'accident sportif</li>
-                        </ul>
-                    </ul>
-                    <button onClick={handleHome}>Fin, retour à l'accueil</button>
+                    <div className="container">
+                        <BarreEtapes isMajeur={isAdherentMajeur}/>
+                        <div className={"encadrementPrincipal"}>
+                            <div className={style.containerFin}>
+                                <h3>L'adhérent va recevoir par email :</h3>
+                                <ul>
+                                    <li>La facture</li>
+                                    <li>Les horaires</li>
+                                    <li>L'attestation relatif à l'état de santé <span>(à rentourner)</span></li>
+                                    <li>Les règles autour du certificat médical et/ou des attesations sur l'honneur</li>
+                                    <li>Ainsi que des informations sur :</li>
+                                    <ul>
+                                        <li>L'autorisation du droit à l'image</li>
+                                        <li>La situation d'accident sportif</li>
+                                    </ul>
+                                </ul>
+                                <button className={"buttonSuivant"} onClick={handleHome}>Fin, retour à l'accueil</button>
+                            </div>
+                        </div>
+                    </div>
                 </>
             }
         </div>

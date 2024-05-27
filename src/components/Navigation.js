@@ -1,16 +1,12 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import RetourAccueil from "../assets/RetourAccueil"
+import NavigationAccueil from "./NavigationAccueil"
 import FlecheRetour from "../assets/FlecheRetour"
-import './../styles/navigation.scss'
-import './../styles/globale.scss'
+import style from '../styles/Navigation.module.scss'
 
 const Navigation = ({ partieActuelle, afficherPartie, lienVersPagePrecedente }) => {
     const navigate = useNavigate()
 
-    const handleHome = () => {
-        navigate('/')
-    }
     const handleRetour = () => {
         if (partieActuelle === 1) {
             navigate(lienVersPagePrecedente)
@@ -21,8 +17,8 @@ const Navigation = ({ partieActuelle, afficherPartie, lienVersPagePrecedente }) 
 
     return (
         <>
-            <button className="button-retour accueil" onClick={handleHome}><RetourAccueil width="35" height="35"/></button>
-            <button className="button-retour fleche-retour" onClick={handleRetour}><FlecheRetour width="35" height="35"/></button>
+            <NavigationAccueil/>
+            <button className={`buttonRetour ${style.flecheRetour}`} onClick={handleRetour}><FlecheRetour width="27" height="27"/></button>
         </>
     )
 }

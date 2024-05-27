@@ -1,0 +1,25 @@
+@use "../modules/_colors.scss";
+@use "../modules/_fonts.scss";
+
+.divPoids{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  input{
+    width: 42vw;
+  }
+
+  p{
+    margin: 0 10px;
+    color: colors.$text-clair;
+    font-size: 1.5em;
+    font-weight: 600;
+  }
+}
+
+.divGenre{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}

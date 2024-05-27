@@ -2,7 +2,8 @@ import Navigation from "../Navigation"
 import Message from "./Message"
 import React, {useState, useEffect, useContext} from "react"
 import { RouteContext } from '../RouteProvider'
-import BarreEtapes from "./BarreEtapes";
+import BarreEtapes from "./BarreEtapes"
+import style from "../../styles/inscription/FormulaireEtatSante.module.scss"
 
 const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
     const [partieAffichee, setPartieAffichee] = useState(1)
@@ -43,39 +44,43 @@ const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
                     lienVersPagePrecedente={'/nouvel-adherent/responsable'}
                 />
             }
-            <BarreEtapes isMajeur={isAdherentMajeur}/>
-            {partieAffichee === 1 && (
-                <>
-                    <Message
-                        message={'Donner le questionnaire de santé'}
-                        image={'questionnaire_medical'}/>
-                    <button type="button" onClick={() => afficherPartie(2)}>Suivant</button>
-                </>
-            )}
-            {partieAffichee === 2 && (
-                <div>
-                   <button type="button" onClick={() => reponseQuestionnaireMedicale(false)}>
-                       L'adhérent a répondu <span>non</span> à toutes les questions du formulaire
-                   </button>
-                   <button type="button" onClick={() => reponseQuestionnaireMedicale(true)}>
-                       L'adhérent a répondu <span>oui</span> à une ou plusieurs questions du formulaire
-                   </button>
-                </div>
-            )}
-            {partieAffichee === 3 && (
-                <div>
-                    { etatSante ?
+            <div className="container">
+                <BarreEtapes isMajeur={isAdherentMajeur}/>
+                {partieAffichee === 1 && (
+                    <div>
                         <Message
-                            message={'L’adhérent a besoin d’un certificat médical, à remettre avant la première séance.'}
-                            image={'certificat_medical'}/>
-                        :
-                        <Message
-                            message={'L’adhérent n\'a besoin d’aucun certificat médical, à remettre avant la première séance.'}
-                            image={'certificat_medical_barre'}/>
-                    }
-                    <button type="button" onClick={() => handleSuivant()}>Suivant</button>
-                </div>
-            )}
+                            message={'Donner le questionnaire de santé'}
+                            image={'questionnaire_medical'}/>
+                        <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(2)}>Suivant</button>
+                    </div>
+                )}
+                {partieAffichee === 2 && (
+                    <div className={"encadrementPrincipal"}>
+                        <div className={style.divButtonEtatSante}>
+                            <button className={style.buttonNon}type="button" onClick={() => reponseQuestionnaireMedicale(false)}>
+                                L'adhérent a répondu <br/><span>non</span> à toutes les questions <br/>du formulaire
+                            </button>
+                            <button className={style.buttonOui} type="button" onClick={() => reponseQuestionnaireMedicale(true)}>
+                                L'adhérent a répondu <br/><span>oui</span> à une ou plusieurs <br/>questions du formulaire
+                            </button>
+                        </div>
+                    </div>
+                )}
+                {partieAffichee === 3 && (
+                    <div>
+                        {etatSante ?
+                            <Message
+                                message={'L’adhérent a <span>besoin</span> d’un <span>certificat médical</span>, à remettre avant la première séance.'}
+                                image={'certificat_medical'}/>
+                            :
+                            <Message
+                                message={'L’adhérent n\'a besoin d’<span>aucun certificat médical</span>, à remettre avant la première séance.'}
+                                image={'certificat_medical_barre'}/>
+                        }
+                        <button className={"buttonSuivant"} type="button" onClick={() => handleSuivant()}>Suivant</button>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

@@ -1,0 +1,61 @@
+@use "../modules/_colors.scss";
+@use "../modules/_fonts.scss";
+
+.barreEtapes{
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  margin-top: 13vh;
+  margin-bottom: 45px;
+}
+
+.etapeFaite{
+  margin: 15px 14px;
+}
+
+.etapeEnCours{
+  margin: 12px 14px;
+}
+
+.etapeNonFaite{
+  margin: 15px 14px;
+}
+
+.chiffreEtapeFaite{
+  font-size: 1.6em;
+  margin-right: 5px;
+  font-weight: 500;
+}
+
+.texteEtapeFaite{
+  font-size: 1.4em;
+  font-weight: 300;
+}
+
+.chiffreEtapeEnCours{
+  font-size: 2.4em;
+  font-weight: 600;
+  margin-right: 5px;
+  color: colors.$rose;
+}
+
+.texteEtapeEnCours{
+  font-size: 1.8em;
+}
+
+.chiffreEtapeNonFaite{
+  font-size: 1.6em;
+  color: colors.$background-clair;
+  opacity: 0.4;
+  margin-right: 5px;
+  font-weight: 600;
+  transition: 0.5s;
+}
+
+.texteEtapeNonFaite{
+  color: colors.$background-clair;
+  opacity: 0.4;
+  font-size: 1.3em;
+  font-weight: 400;
+  transition: 0.5s;
+}

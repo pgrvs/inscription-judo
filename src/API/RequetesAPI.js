@@ -37,7 +37,8 @@ const getAdherentsByDateInscriptionByCategorie = async (categorie) => {
     if (month < 6) {
         year = year - 1
     }
-
+    console.log(categorie)
+    console.log(categoryForDolibarr(categorie.label))
     const filter = `sqlfilters=((ef.datedinscription:>:'${year}-08-01') and (ef.categorie:=:'${categoryForDolibarr(categorie.label)}') and ((ef.certificatmdicale:=:'2') or (ef.certificatmdicale:=:'3')))`
     // exemple : ((ef.datedinscription:>:'2023-08-01') and (ef.categorie:=:'2') and ((ef.certificatmdicale:=:'2') or (ef.certificatmdicale:=:'3')))
     try {
@@ -141,6 +142,7 @@ const updateAdherent = async (idAdherent, adherentData, etatSante, cotisation) =
             'options_couleurdelaceinture' : adherentData.couleurCeinture,
             'options_poidsenkilogramme' : adherentData.poids,
             'options_genre' : adherentData.genre,
+            'options_numroadhrent' : adherentData.numroAdhrent,
             'options_certificatmdicale' : certificatmedicale,
             'options_droitimage' : droitImage,
             'options_derniereanneelicenciee' : calculeAnneeLicenciee(),

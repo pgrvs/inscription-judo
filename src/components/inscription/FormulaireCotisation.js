@@ -4,6 +4,7 @@ import {calculerAge} from "../../common/utils"
 import Navigation from "../Navigation"
 import ConfirmationModal from "../ConfiramtionModal"
 import BarreEtapes from "./BarreEtapes"
+import style from "../../styles/inscription/FormulaireCotisation.module.scss"
 
 const getDefaultCategory = (age, categories) => {
     if (age === 5) return categories.find((cat) => cat.label === 'Moustique')
@@ -21,7 +22,7 @@ const getDefaultCategory = (age, categories) => {
 const FormulaireCotisation = ({ donnees, onSuivant }) => {
     const [categories, setCategories] = useState([]);
     const [selectedCategorie, setSelectedCategorie] = useState(null)
-    const [paiement, setPaiement] = useState(null)
+    const [paiement, setPaiement] = useState(donnees.cotisation.paiement ? donnees.cotisation.paiement : null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [newCategory, setNewCategory] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -65,6 +66,7 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
     }
 
     const handleCategoryChange = (e) => {
+        console.log(e.target.name)
         const categoryId = e.target.value
         const category = categories.find((cat) => cat.id === categoryId)
         setNewCategory(category)
@@ -113,67 +115,76 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
                 afficherPartie={1}
                 lienVersPagePrecedente={'/nouvel-adherent/etat-sante'}
             />
-            <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
-            <h2>Formulaire de Cotisation</h2>
-            { loading
-                ? <p>Recherche en cours...</p>
-                : <>
-                    <div>
-                        <label htmlFor="category">Catégorie :</label>
-                        <select
-                            id="category"
-                            onChange={handleCategoryChange}
-                            value={selectedCategorie ? selectedCategorie.id : ''}
-                        >
-                            <option value="">Sélectionnez une catégorie</option>
-                            {categories.map((category) => (
-                                <option key={category.id} value={category.id}>
-                                    {category.label}
-                                </option>
-                            ))}
-                        </select>
-                        {erreurs.categorie && <span style={{color: 'red'}}>{erreurs.categorie}</span>}
+            <div className="container">
+                <BarreEtapes isMajeur={donnees.isAdherentMajeur}/>
+                <div className={"encadrementPrincipal"}>
+                    <div className={"containerForm"}>
+                        { loading
+                            ? <div className={"loader"}></div>
+                            : <>
+                                <div id={style.idDivCategorie} >
+                                    <label htmlFor="category">{adherentName} est dans la catégorie :</label>
+                                    <select
+                                        id="category"
+                                        name="categorie"
+                                        className={style.selectCategorie}
+                                        onChange={handleCategoryChange}
+                                        value={selectedCategorie ? selectedCategorie.id : ''}
+                                    >
+                                        <option value="">Sélectionner une catégorie</option>
+                                        {categories.map((category) => (
+                                            <option key={category.id} value={category.id}>
+                                                {category.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {erreurs.categorie && <span className={"erreur"}>{erreurs.categorie}</span>}
+
+                                {selectedCategorie && (
+                                    <>
+                                        <div>
+                                            <p className={style.pragrapheCotisation}>Montant de la cotisation
+                                                : <span>{parseFloat(selectedCategorie.price).toFixed(2)}</span> €</p>
+                                        </div>
+                                        <label>Nombre de paiements :</label>
+                                        <div className={style.divPaiement}>
+                                            <div>
+                                                <input type="radio" name="paiement" value="1" checked={paiement === 1}
+                                                       onChange={handlePaiementChange}/>
+                                                <label>1 fois</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" name="paiement" value="2" checked={paiement === 2}
+                                                       onChange={handlePaiementChange}/>
+                                                <label>2 fois</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" name="paiement" value="3" checked={paiement === 3}
+                                                       onChange={handlePaiementChange}/>
+                                                <label>3 fois</label>
+                                            </div>
+
+                                            {erreurs.paiement && <span className={"erreur"}>{erreurs.paiement}</span>}
+                                        </div>
+                                    </>
+                                )}
+
+                                <button className={"buttonSuivant"} onClick={() => handleClickSuivant(selectedCategorie, paiement)}>
+                                    Suivant
+                                </button>
+                            </>
+                        }
                     </div>
-
-                    {selectedCategorie && (
-                        <>
-                            <div>
-                                <p>Montant de la cotisation : {parseFloat(selectedCategorie.price).toFixed(2)} €</p>
-                            </div>
-                            <div>
-                                <label>Nombre de paiements :</label>
-                                <label>
-                                    <input type="radio" name="paiement" value="1" checked={paiement === 1}
-                                           onChange={handlePaiementChange}/>
-                                    1 fois
-                                </label>
-                                <label>
-                                    <input type="radio" name="paiement" value="2" checked={paiement === 2}
-                                           onChange={handlePaiementChange}/>
-                                    2 fois
-                                </label>
-                                <label>
-                                    <input type="radio" name="paiement" value="3" checked={paiement === 3}
-                                           onChange={handlePaiementChange}/>
-                                    3 fois
-                                </label>
-                                {erreurs.paiement && <span style={{color: 'red'}}>{erreurs.paiement}</span>}
-                            </div>
-                        </>
-                    )}
-
-                    <button onClick={() => handleClickSuivant(selectedCategorie, paiement)}>
-                        Suivant
-                    </button>
-                </>
-            }
+                </div>
+            </div>
 
             <ConfirmationModal
                 isOpen={isModalOpen}
                 onConfirm={handleConfirmChange}
                 onClose={handleCancelChange}
-                message={`Êtes-vous sûr de vouloir changer ${adherentName} 
-                dans catégorie ${categoryLabel} ?`}
+                message={`Êtes-vous sûr de vouloir changer <span>${adherentName} </span>
+                dans la catégorie <span>${categoryLabel}</span> ?`}
             />
         </div>
     )

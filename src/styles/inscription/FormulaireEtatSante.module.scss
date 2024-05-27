@@ -1,0 +1,37 @@
+@use "../modules/_colors.scss";
+@use "../modules/_fonts.scss";
+
+.divButtonEtatSante{
+  font-size: 1.2em;
+  display: flex;
+
+  button{
+    border: 0;
+    border-radius: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 20px 30px;
+    box-shadow: 0 0 0 colors.$background-sombre;
+    transition: 200ms;
+    width: 300px;
+  }
+
+  .buttonNon{
+    background: linear-gradient(90deg, colors.$vert-clair, colors.$vert-sombre);
+    margin-right: 10px;
+  }
+
+  .buttonOui{
+    background: linear-gradient(90deg, colors.$rouge-clair, colors.$rouge-sombre);
+    margin-left: 10px;
+  }
+
+  button:hover{
+    box-shadow: 0 0 20px colors.$background-sombre;
+    transition: 200ms;
+  }
+
+  span{
+    font-weight: 800;
+  }
+}

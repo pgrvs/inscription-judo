@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { getAdherentsByDateInscriptionByCategorie, getCategorieLicence } from "../API/RequetesAPI"
-import { useNavigate } from 'react-router-dom'
+import NavigationAccueil from "./NavigationAccueil"
+import style from "./../styles/VerificationCertificatsMedicals.module.scss"
 
 const VerificationCertificatsMedicals = () => {
     const [loadingCategories, setLoadingCategories] = useState(false)
@@ -8,14 +9,13 @@ const VerificationCertificatsMedicals = () => {
     const [categories, setCategories] = useState([])
     const [selectedCategorie, setSelectedCategorie] = useState(null)
     const [adherents, setAdherents] = useState([])
-    const navigate = useNavigate()
 
     useEffect(() => {
         fetchCategories()
     }, [])
 
     useEffect(() => {
-        if (selectedCategorie !== null && selectedCategorie !== '') {
+        if (selectedCategorie !== null && selectedCategorie !== undefined) {
             fetchAdherents()
         }
     }, [selectedCategorie])
@@ -48,50 +48,63 @@ const VerificationCertificatsMedicals = () => {
         setSelectedCategorie(category)
     }
 
-    const handleHome = () => {
-        navigate('/')
-    }
-
     return (
         <>
-            <button onClick={handleHome}>Home</button>
-            <div>
-                <h2>Vérification des certificats médicaux</h2>
-                {loadingCategories ? (
-                    <p>Recherche des catégories en cours</p>
-                ) : (
-                    <div>
-                        <label htmlFor="category">Catégorie :</label>
-                        <select
-                            id="category"
-                            onChange={handleCategoryChange}
-                            value={selectedCategorie ? selectedCategorie.id : ''}
-                        >
-                            <option value="">Sélectionnez une catégorie</option>
-                            {categories.map((category) => (
-                                <option key={category.id} value={category.id}>
-                                    {category.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
-                {loadingAdherents ? (
-                    <p>Recherche des adhérents en cours</p>
-                ) : adherents.length > 0 ? (
-                    <table>
-                        <tbody>
-                        {adherents.map((adherent) => (
-                            <tr key={adherent.id}>
-                                <td>{adherent.name}</td>
-                                <td>{adherent.array_options.options_certificatmdicale === 2 ? 'en attente' : 'valide'}</td>
+            <NavigationAccueil/>
+            <div className="container">
+                <h1>Vérification des certificats médicaux</h1>
+                <div className={style.containerVerifCertificat}>
+                    {loadingCategories ? (
+                        <div className={"loader"}></div>
+                    ) : (
+                        <div className={style.divLabelSelect}>
+                            <label htmlFor="category">Choisir la catégorie :</label>
+                            <select
+                                id="category"
+                                className={style.selectCategorie}
+                                onChange={handleCategoryChange}
+                                value={selectedCategorie ? selectedCategorie.id : ''}
+                            >
+                                <option value="">Sélectionner une catégorie</option>
+                                {categories.map((category) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                    {loadingAdherents ? (
+                        <>
+                            <div className={"loader"}></div>
+                            <p>Recherche des adhérents en cours</p>
+                        </>
+                    ) : adherents.length > 0 ? (
+                        <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Nom Prenom</th>
+                                <th scope="col">Statut</th>
                             </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p>Aucun adhérent trouvé</p>
-                )}
+                            </thead>
+                            <tbody>
+                            {adherents.map((adherent) => (
+                                <tr key={adherent.id}>
+                                    <td>{adherent.name}</td>
+                                    <td>
+                                        <span className={adherent.array_options.options_certificatmdicale === '2' ? style.pastilleOrange : style.pastilleVerte}></span>
+                                        {adherent.array_options.options_certificatmdicale === '2' ? 'En attente' : 'Valide'}
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    ) : (adherents.length === undefined && selectedCategorie !== null && selectedCategorie !== undefined) ? (
+                        <p>Aucun adhérent n'a besoin d'un certificat médical</p>
+                    ) : (
+                        <></>
+                    )}
+                </div>
             </div>
         </>
     )

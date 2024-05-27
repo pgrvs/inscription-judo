@@ -2,19 +2,23 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import Accueil from "./components/Accueil"
 import GestionnaireFormulairesAdherent from "./components/inscription/GestionnaireFormulairesAdherent"
 import VerificationCertificatsMedicals from "./components/VerificationCertificatsMedicals"
+import PageNotFound from "./components/PageNotFound"
 import LogoBlanc from "./assets/LogoBlanc"
-import './styles/App.scss'
+import styleApp from './styles/App.module.scss'
 import './styles/globale.scss'
+import './styles/modules/_colors.scss'
+import './styles/modules/_fonts.scss'
 
 const App = () => {
     return (
         <div>
-            <LogoBlanc className="App-logo" width="170" height="69"/>
+            <LogoBlanc className={styleApp.AppLogo} width="170" height="69"/>
             <Router>
                 <Routes>
                     <Route path="/" element={<Accueil />} />
                     <Route path="/nouvel-adherent/*" element={<GestionnaireFormulairesAdherent />} />
                     <Route path="/verification-certificats-medicals" element={<VerificationCertificatsMedicals />} />
+                    <Route path="/*" element={<PageNotFound />} />
                 </Routes>
             </Router>
         </div>

@@ -1,0 +1,23 @@
+@use "../modules/_colors.scss";
+@use "../modules/_fonts.scss";
+
+.containerFin{
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  line-height: 1.7em;
+
+  li {
+    font-size: 1.1em;
+  }
+
+  li::marker {
+    margin-right: 5px;
+    color: colors.$rose;
+  }
+
+  span{
+    font-weight: 700;
+  }
+}

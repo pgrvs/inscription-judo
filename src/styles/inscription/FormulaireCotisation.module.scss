@@ -1,0 +1,61 @@
+@use "../modules/_colors.scss";
+@use "../modules/_fonts.scss";
+
+#idDivCategorie{
+  margin-top: 10px;
+}
+
+.pragrapheCotisation {
+  margin-left: 20px;
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 10px;
+
+  span {
+    font-weight: 800;
+  }
+}
+
+.selectCategorie{
+  margin-left: 10px;
+  background-color: #d60040;
+  color: colors.$text-clair;
+  font-size: 1.1em;
+  font-weight: 600;
+  font-family: fonts.$fonts;
+  border: 8px solid colors.$rose;
+  border-radius: 15px;
+  padding: 0 12px 0 12px;
+  transition: 200ms;
+}
+
+.selectCategorie:hover{
+  box-shadow: 0 0 4px colors.$ombre;
+  transition: 200ms;
+}
+
+.divPaiement{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+
+  div{
+    display: flex;
+    margin-top: 9px;
+    margin-bottom: 5px;
+    margin-left: 43%;
+
+    label{
+      padding: 0;
+    }
+    input{
+      width: auto;
+      height: auto;
+    }
+  }
+}
+
+
+
+

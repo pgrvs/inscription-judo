@@ -1,0 +1,45 @@
+@use "modules/_colors.scss";
+@use "modules/_fonts.scss";
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: colors.$background-modal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal{
+  position: absolute;
+  background-color: colors.$background-clair;
+  color: colors.$text-sombre;
+  width: 40vw;
+  text-align: center;
+  overflow: auto;
+  box-shadow: 13px 7px 20px colors.$ombre;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 20px;
+  outline: none;
+  padding: 20px;
+}
+
+.message{
+  font-size: 1.2em;
+  -webkit-overflow-scrolling: auto;
+  font-weight: 500;
+  line-height: 1.7em;
+  margin: 0;
+
+  span{
+    font-weight: 800;
+  }
+}
+
+.buttonModal{
+  display: flex;
+  justify-content: space-around;
+}

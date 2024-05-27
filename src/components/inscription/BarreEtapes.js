@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
+import style from '../../styles/inscription/BarreEtapes.module.scss'
 
 const BarreEtapes = ({ isMajeur }) => {
     const location = useLocation()
@@ -22,24 +23,27 @@ const BarreEtapes = ({ isMajeur }) => {
     }
 
     return (
-        <div className="barreEtapes">
+        <div className={style.barreEtapes}>
             {etapes.map((etape, index) => {
-                // Déterminer la classe à appliquer à chaque étape
-                let stepClass = 'barreEtapeNonFaite'
-
-                if (index < currentStepIndex) {
-                    stepClass = 'barreEtapeFaite'
-                } else if (index === currentStepIndex) {
-                    stepClass = 'barreEtapeEnCours'
-                }
-
                 return (
-                    <div key={etape}>
-                        <span className={'chiffre' + stepClass}>
-                            {index + 1}
+                    <div
+                        className={index < currentStepIndex ? style.etapeFaite :
+                        index === currentStepIndex ? style.etapeEnCours :
+                            style.etapeNonFaite}
+                        key={etape}>
+                        <span className={
+                            index < currentStepIndex ? style.chiffreEtapeFaite :
+                                index === currentStepIndex ? style.chiffreEtapeEnCours :
+                                    style.chiffreEtapeNonFaite
+                        }>
+                          {index + 1}
                         </span>
-                        <span className={stepClass}>
-                            {etape}
+                        <span className={
+                            index < currentStepIndex ? style.texteEtapeFaite :
+                                index === currentStepIndex ? style.texteEtapeEnCours :
+                                    style.texteEtapeNonFaite
+                        }>
+                          {etape}
                         </span>
                     </div>
                 )

@@ -1,9 +1,14 @@
 import React, {useEffect, useState} from 'react'
 import {rechercheAdherents, getResponsablesByIdAdherent} from "../../API/RequetesAPI"
-import Navigation from '../Navigation'
+import Nav from '../Navigation'
 import {splitName, convertTimestampToDate, capitalize, informationsRecevoirParMailToObject} from "../../common/utils"
-import './../../styles/recherche-adherent.scss'
-import './../../styles/globale.scss'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/scss'
+import 'swiper/scss/navigation'
+import 'swiper/scss/pagination'
+import style from '../../styles/inscription/Recherche-adherent.module.scss'
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
+import AjoutAdherent from "../../assets/AjoutAdherent";
 
 const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
     const [nom, setNom] = useState('')
@@ -77,7 +82,8 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                 couleurCeinture: adherent.array_options.options_couleurdelaceinture,
                 poids: adherent.array_options.options_poidsenkilogramme,
                 genre: adherent.array_options.options_genre,
-                droitImage: adherent.array_options.options_droitimage
+                droitImage: adherent.array_options.options_droitimage,
+                numroAdhrent: adherent.array_options.options_numroadhrent
             }
             responsablesAPI = await getResponsablesByIdAdherent(idAdherent)
             if (responsablesAPI.length > 0){
@@ -103,61 +109,92 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
 
     return (
         <div>
-            <Navigation
+            <Nav
                 partieActuelle={1}
                 afficherPartie={1}
                 lienVersPagePrecedente={'/'}
             />
-            <h2>Recherche Adhérent</h2>
-            <input
-                type="text"
-                value={prenom}
-                onChange={handleChangePrenom}
-                placeholder="Prénom"
-            />
-            <br/>
-            <input
-                type="text"
-                value={nom}
-                onChange={handleChangeNom}
-                placeholder="Nom"
-            />
-            <br/>
-            <input
-                type="text"
-                value={numeroLicence}
-                onChange={handleChangeNumeroLicence}
-                placeholder="Numero de licence"
-            />
-            <h3>Résultats de la recherche :</h3>
 
-            {loading
-                ? <p>Recherche en cours...</p>
-                : (
-                    <>
-                        {resultats.length > 0 && (
-                            <div>
-                                <ul>
-                                    {resultats.map((adherent) => (
-                                        <li key={adherent.id}>
-                                            {adherent.name} - {adherent.array_options.options_numroadhrent}
-                                            <button onClick={() => handleClickSuivant(adherent)}>Sélectionner</button>
-                                        </li>
-                                    ))}
-                                </ul>
+            <div className="container">
+                <div>
+                    <h1>Recherche adhérent</h1>
+                    <div className={"encadrementPrincipal"}>
+                        <div className={"containerForm"}>
+                            <label>Entrer le Nom et Prénom :</label>
+                            <input
+                                type="text"
+                                value={nom}
+                                onChange={handleChangeNom}
+                                placeholder="Nom"
+                            />
+                            <input
+                                type="text"
+                                value={prenom}
+                                onChange={handleChangePrenom}
+                                placeholder="Prénom"
+                            />
+                            <label>Entrer le numéro de licence :</label>
+                            <input
+                                type="text"
+                                value={numeroLicence}
+                                onChange={handleChangeNumeroLicence}
+                                placeholder="Numero de licence"
+                            />
+                        </div>
+                        <div className={style.swiperContainer}>
+                            <div className={style.swiperDiv}>
+                                {loading
+                                    ? <div className={"loader"}></div>
+                                    : (
+                                        <>
+                                            {(resultats.length > 0 && resultats !== undefined) && (
+                                                <>
+                                                    <Swiper
+                                                        className={style.swiperContainerCards}
+                                                        modules={[Navigation, Pagination, Scrollbar, A11y]}
+                                                        slidesPerView={3}
+                                                        scrollbar={{draggable: true}}
+                                                        navigation={{
+                                                            nextEl: '.swiper-button-next',
+                                                            prevEl: '.swiper-button-prev',
+                                                        }}
+                                                    >
+                                                        {resultats.map((adherent) => (
+                                                            <SwiperSlide key={adherent.id}>
+                                                                <button className={style.cardAdherent}
+                                                                        onClick={() => handleClickSuivant(adherent)}>
+                                                                    <p className={style.nomAdherent}>{adherent.name}</p>
+                                                                    <p className={style.infoAdherent}>{adherent.email}</p>
+                                                                    <p className={style.infoAdherent}>{adherent.array_options.options_numroadhrent}</p>
+                                                                </button>
+                                                            </SwiperSlide>
+                                                        ))}
+                                                    </Swiper>
+                                                    <div className={`swiper-button-next ${style.buttonNext}`}></div>
+                                                    <div className={`swiper-button-prev ${style.buttonPrev}`}></div>
+                                                </>
+                                            )}
+                                            {(resultats.length === 0 && (nom === '' && prenom === '' && numeroLicence === '')) && (
+                                                <p className={style.messageRecherche}>Entrer une recherche pour trouver des adhérents</p>
+                                            )}
+                                            {(resultats.length === undefined && (nom !== '' || prenom !== '')) && (
+                                                <p className={style.messageRecherche}>Aucun adhérent trouvé au nom de {nom} {prenom}</p>
+                                            )}
+                                            {(resultats.length === undefined && (numeroLicence !== '')) && (
+                                                <p className={style.messageRecherche}>Aucun adhérent trouvé avec le numéro de licence : {numeroLicence}</p>
+                                            )}
+                                        </>
+                                    )
+                                }
                             </div>
-                        )}
-                        {(resultats.length === undefined && (nom !== '' || prenom !== '')) && (
-                            <p>Aucun adhérent trouvé au nom de {nom} {prenom}</p>
-                        )}
-                        {(resultats.length === undefined && (numeroLicence !== '')) && (
-                            <p>Aucun adhérent trouvé avec le numéro de licence : {numeroLicence}</p>
-                        )}
-                    </>
-                )
-            }
-            <br/>
-            <button onClick={() => handleClickSuivant(null)}>Nouvel Adhérent</button>
+                        </div>
+                        <button className={"buttonNoir"} onClick={() => handleClickSuivant(null)}>
+                            <AjoutAdherent className={"iconeAjout"} alt="Ajout adherent"/>
+                            <p>Créer un nouvel adhérent</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
