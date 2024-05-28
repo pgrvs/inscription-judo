@@ -152,7 +152,13 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                                                     <Swiper
                                                         className={style.swiperContainerCards}
                                                         modules={[Navigation, Pagination, Scrollbar, A11y]}
-                                                        slidesPerView={3}
+                                                        breakpoints={{
+                                                            // quand la largeur de la page est >= 1500px
+                                                            1500: {slidesPerView: 3,},
+                                                            1000: {slidesPerView: 2,},
+                                                            700: {slidesPerView: 1,},
+                                                            0: {slidesPerView: 1,},
+                                                        }}
                                                         scrollbar={{draggable: true}}
                                                         navigation={{
                                                             nextEl: '.swiper-button-next',
@@ -177,7 +183,7 @@ const RechercheAdherent = ({ donneesRecherche, onSuivant }) => {
                                             {(resultats.length === 0 && (nom === '' && prenom === '' && numeroLicence === '')) && (
                                                 <p className={style.messageRecherche}>Entrer une recherche pour trouver des adhérents</p>
                                             )}
-                                            {(resultats.length === undefined && (nom !== '' || prenom !== '')) && (
+                                            {(resultats.length === undefined && (nom !== '' || prenom !== '') && (numeroLicence === '')) && (
                                                 <p className={style.messageRecherche}>Aucun adhérent trouvé au nom de {nom} {prenom}</p>
                                             )}
                                             {(resultats.length === undefined && (numeroLicence !== '')) && (

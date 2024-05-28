@@ -3,7 +3,9 @@ import Message from "./Message"
 import React, {useState, useEffect, useContext} from "react"
 import { RouteContext } from '../RouteProvider'
 import BarreEtapes from "./BarreEtapes"
+import ButtonSuivant from "../ButtonSuivant"
 import style from "../../styles/inscription/FormulaireEtatSante.module.scss"
+
 
 const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
     const [partieAffichee, setPartieAffichee] = useState(1)
@@ -51,7 +53,7 @@ const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
                         <Message
                             message={'Donner le questionnaire de santé'}
                             image={'questionnaire_medical'}/>
-                        <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(2)}>Suivant</button>
+                        <ButtonSuivant text={"Suivant"} onClick={() => afficherPartie(2)} />
                     </div>
                 )}
                 {partieAffichee === 2 && (
@@ -77,7 +79,7 @@ const FormulaireEtatSante = ({isAdherentMajeur, onSuivant}) => {
                                 message={'L’adhérent n\'a besoin d’<span>aucun certificat médical</span>, à remettre avant la première séance.'}
                                 image={'certificat_medical_barre'}/>
                         }
-                        <button className={"buttonSuivant"} type="button" onClick={() => handleSuivant()}>Suivant</button>
+                        <ButtonSuivant text={"Suivant"} onClick={() => handleSuivant()} />
                     </div>
                 )}
             </div>

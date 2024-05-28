@@ -38,3 +38,10 @@
     font-weight: 800;
   }
 }
+
+@media screen and (max-width: 700px) {
+  .divMessage{
+    width: 80vw;
+  }
+}
+

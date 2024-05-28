@@ -23,6 +23,7 @@ import {
 } from "../email/emailText"
 import {render} from '@react-email/render'
 import style from "../../styles/inscription/FormulaireFin.module.scss"
+import ButtonSuivant from "../ButtonSuivant";
 
 const FormulaireFin = ({donnees}) => {
     const [loading, setLoading] = useState(false)
@@ -218,7 +219,7 @@ const FormulaireFin = ({donnees}) => {
                         'Cercle du Judo Vesoul - Inscription',
                         textEmailResponsable(adherent.prenom, adherent.nom),
                         emailHtml,
-                        attachments
+                        attachmentsResponsable
                     )
                 }
             })
@@ -230,7 +231,10 @@ const FormulaireFin = ({donnees}) => {
     return(
         <div>
             { loading
-                ? <p>Traitement en cours ...</p>
+                ?<div className={style.traitement}>
+                    <h1>Traitement en cours ...</h1>
+                    <div className={"loader"}></div>
+                </div>
                 :
                 <>
                     <Navigation
@@ -254,7 +258,7 @@ const FormulaireFin = ({donnees}) => {
                                         <li>La situation d'accident sportif</li>
                                     </ul>
                                 </ul>
-                                <button className={"buttonSuivant"} onClick={handleHome}>Fin, retour à l'accueil</button>
+                                <ButtonSuivant text={"Fin, retour à l'accueil"} onClick={handleHome} />
                             </div>
                         </div>
                     </div>

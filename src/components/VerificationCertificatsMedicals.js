@@ -61,7 +61,7 @@ const VerificationCertificatsMedicals = () => {
                             <label htmlFor="category">Choisir la catégorie :</label>
                             <select
                                 id="category"
-                                className={style.selectCategorie}
+                                className={"selectCategorie"}
                                 onChange={handleCategoryChange}
                                 value={selectedCategorie ? selectedCategorie.id : ''}
                             >

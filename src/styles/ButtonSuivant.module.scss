@@ -1,0 +1,26 @@
+@use "./modules/colors";
+@use "./modules/fonts";
+
+
+.buttonSuivant{
+  background-color: colors.$rose;
+  border-radius: 10px;
+  border: 1.5px solid colors.$rose;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 300ms;
+
+  p{
+    margin: 2px 5px;
+  }
+}
+
+.buttonSuivant:hover{
+  border: 1.5px solid colors.$text-clair;
+  transition: 300ms;
+}

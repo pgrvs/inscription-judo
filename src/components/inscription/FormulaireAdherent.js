@@ -3,6 +3,7 @@ import {capitalize, isAdherentMajeur, validatePhoneNumber, validateEmail, valida
 import Navigation from "../Navigation"
 import { RouteContext } from '../RouteProvider'
 import BarreEtapes from "./BarreEtapes"
+import ButtonSuivant from '../ButtonSuivant'
 import Cleave from "cleave.js/react"
 import style from "../../styles/inscription/FormulaireAdherent.module.scss"
 
@@ -79,20 +80,29 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
         }
     }
 
-    const onPhoneChange = (e) => {
+    const handleChangePrenom = (e) => {
         const { name, value } = e.target
-        const numTelephoneSansEspace = value.replace(/ /g, "")
-        setAdherentData({ ...adherentData, numeroTelephone: numTelephoneSansEspace })
+        setAdherentData({ ...adherentData, prenom: capitalize(value) })
         if (erreurs[name]) {
             // Efface l'erreur pour ce champ si valide
             setErreurs({ ...erreurs, [name]: '' })
         }
     }
 
-
-    const handleChangePrenom = (e) => {
+    const onCodePostalChange = (e) =>{
         const { name, value } = e.target
-        setAdherentData({ ...adherentData, prenom: capitalize(value) })
+        const codePostalSansEspace = value.replace(/ /g, "")
+        setAdherentData({ ...adherentData, codePostal: codePostalSansEspace })
+        if (erreurs[name]) {
+            // Efface l'erreur pour ce champ si valide
+            setErreurs({ ...erreurs, [name]: '' })
+        }
+    }
+
+    const onPhoneChange = (e) => {
+        const { name, value } = e.target
+        const numTelephoneSansEspace = value.replace(/ /g, "")
+        setAdherentData({ ...adherentData, numeroTelephone: numTelephoneSansEspace })
         if (erreurs[name]) {
             // Efface l'erreur pour ce champ si valide
             setErreurs({ ...erreurs, [name]: '' })
@@ -198,23 +208,18 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                                 <>
                                     <legend>Informations personnelles</legend>
                                     <label>Nom :</label>
-                                    <input type="text" name="nom" value={adherentData.nom} onChange={handleChangeNom}/>
+                                    <input type="text" name="nom" value={adherentData.nom} onChange={handleChangeNom} placeholder={"Entrer le nom"}/>
                                     {erreurs.nom && <span className={"erreur"}>{erreurs.nom}</span>}
 
                                     <label>Prénom :</label>
-                                    <input type="text" name="prenom" value={adherentData.prenom}
-                                           onChange={handleChangePrenom}/>
+                                    <input type="text" name="prenom" value={adherentData.prenom} onChange={handleChangePrenom} placeholder={"Entrer le prénom"}/>
                                     {erreurs.prenom && <span className={"erreur"}>{erreurs.prenom}</span>}
 
                                     <label>Date de naissance :</label>
-                                    <input type="date" name="dateDeNaissance" value={adherentData.dateDeNaissance}
-                                           onChange={handleChange}/>
-                                    {erreurs.dateDeNaissance &&
-                                        <span className={"erreur"}>{erreurs.dateDeNaissance}</span>}
+                                    <input type="date" name="dateDeNaissance" value={adherentData.dateDeNaissance} onChange={handleChange}/>
+                                    {erreurs.dateDeNaissance && <span className={"erreur"}>{erreurs.dateDeNaissance}</span>}
 
-                                    <button className={"buttonSuivant"} type="button"
-                                            onClick={() => afficherPartie(2)}>Suivant
-                                    </button>
+                                    <ButtonSuivant text={"Suivant"} onClick={() => afficherPartie(2)} />
                                 </>
                             )}
 
@@ -222,18 +227,28 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                                 <>
                                     <legend>Adresse</legend>
                                     <label>Rue :</label>
-                                    <input type="text" name="rue" value={adherentData.rue} onChange={handleChange} />
+                                    <input type="text" name="rue" value={adherentData.rue} onChange={handleChange} placeholder={"Entrer le n° et la nom de rue"}/>
                                     {erreurs.rue && <span className={"erreur"}>{erreurs.rue}</span>}
 
                                     <label>Code Postal :</label>
-                                    <input type="text" name="codePostal" value={adherentData.codePostal} onChange={handleChange} />
+                                    <Cleave
+                                        placeholder="Entrer le code postal"
+                                        options={{
+                                            blocks: [2, 3],
+                                            delimiter: " ",
+                                        }}
+                                        onChange={onCodePostalChange}
+                                        className="form-field"
+                                        name="codePostal"
+                                        value={adherentData.codePostal}
+                                    />
                                     {erreurs.codePostal && <span className={"erreur"}>{erreurs.codePostal}</span>}
 
                                     <label>Ville :</label>
-                                    <input type="text" name="ville" value={adherentData.ville} onChange={handleChange} />
+                                    <input type="text" name="ville" value={adherentData.ville} onChange={handleChange} placeholder={"Entrer la Ville"}/>
                                     {erreurs.ville && <span className={"erreur"}>{erreurs.ville}</span>}
 
-                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(3)}>Suivant</button>
+                                    <ButtonSuivant text={"Suivant"} onClick={() => afficherPartie(3)} />
                                 </>
                             )}
 
@@ -242,7 +257,7 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                                     <legend>Coordonnées</legend>
                                     <label>Numéro de téléphone :</label>
                                     <Cleave
-                                        placeholder="09 08 76 54 32"
+                                        placeholder="06 00 00 00 00"
                                         options={{
                                             blocks: [2, 2, 2, 2, 2],
                                             delimiter: " ",
@@ -255,10 +270,10 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                                     {erreurs.numeroTelephone && <span className={"erreur"}>{erreurs.numeroTelephone}</span>}
 
                                     <label>Adresse email :</label>
-                                    <input type="email" name="adresseEmail" value={adherentData.adresseEmail} onChange={handleChange} />
+                                    <input type="email" name="adresseEmail" value={adherentData.adresseEmail} onChange={handleChange} placeholder={"exemple@email.com"}/>
                                     {erreurs.adresseEmail && <span className={"erreur"}>{erreurs.adresseEmail}</span>}
 
-                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(4)}>Suivant</button>
+                                    <ButtonSuivant text={"Suivant"} onClick={() => afficherPartie(4)} />
                                 </>
                             )}
 
@@ -266,12 +281,12 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
                                 <>
                                     <legend>Informations supplémentaires</legend>
                                     <label>Couleur de ceinture :</label>
-                                    <input type="text" name="couleurCeinture" value={adherentData.couleurCeinture} onChange={handleChange}/>
+                                    <input type="text" name="couleurCeinture" value={adherentData.couleurCeinture} onChange={handleChange} placeholder={"Entrer la couleur de la ceinture actuelle"}/>
                                     {erreurs.couleurCeinture && <span className={"erreur"}>{erreurs.couleurCeinture}</span>}
 
                                     <label>Poids :</label>
                                     <div className={style.divPoids}>
-                                        <input type="text" name="poids" value={adherentData.poids} onChange={handleChange}/>
+                                        <input type="text" name="poids" value={adherentData.poids} onChange={handleChange} placeholder={"Entrer le poids en kilogrammes"}/>
                                         <p>Kg</p>
                                     </div>
                                     {erreurs.poids && <span className={"erreur"}>{erreurs.poids}</span>}
@@ -305,9 +320,7 @@ const FormulaireAdherent = ({donnees, onSuivant}) => {
 
                                     {erreurs.genre && <span className={"erreur"}>{erreurs.genre}</span>}
 
-                                    <button className={"buttonSuivant"} type="button" onClick={() => handleClickSuivant()}>
-                                        Suivant
-                                    </button>
+                                    <ButtonSuivant text={"Suivant"} onClick={() => handleClickSuivant()} />
                                 </>
                             )}
                         </div>

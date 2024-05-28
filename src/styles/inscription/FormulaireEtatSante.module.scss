@@ -35,3 +35,17 @@
     font-weight: 800;
   }
 }
+
+@media screen and (max-width: 700px) {
+  .divButtonEtatSante {
+    flex-direction: column;
+  }
+
+  .buttonNon{
+    margin-left: 10px;
+  }
+
+  .buttonOui{
+    margin-right: 10px;
+  }
+}

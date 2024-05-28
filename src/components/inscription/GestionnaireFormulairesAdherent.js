@@ -7,6 +7,7 @@ import FormulaireEtatSante from './FormulaireEtatSante'
 import FormulaireCotisation from './FormulaireCotisation'
 import FormulaireFin from './FormulaireFin'
 import RouteProvider from '../RouteProvider'
+import PageNotFound from "../PageNotFound";
 
 const GestionnaireFormulairesAdherent = () => {
     const navigate = useNavigate()
@@ -80,6 +81,7 @@ const GestionnaireFormulairesAdherent = () => {
                     <Route path="fin"
                            element={<FormulaireFin
                                donnees={donnees}/>} />
+                    <Route path="*" element={<PageNotFound/>} />
                 </Routes>
             </RouteProvider>
         </div>

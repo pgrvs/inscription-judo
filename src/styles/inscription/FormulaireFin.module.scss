@@ -1,6 +1,14 @@
 @use "../modules/_colors.scss";
 @use "../modules/_fonts.scss";
 
+.traitement{
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .containerFin{
   margin-top: 15px;
   display: flex;

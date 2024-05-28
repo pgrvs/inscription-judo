@@ -4,6 +4,7 @@ import {calculerAge} from "../../common/utils"
 import Navigation from "../Navigation"
 import ConfirmationModal from "../ConfiramtionModal"
 import BarreEtapes from "./BarreEtapes"
+import ButtonSuivant from "../ButtonSuivant"
 import style from "../../styles/inscription/FormulaireCotisation.module.scss"
 
 const getDefaultCategory = (age, categories) => {
@@ -122,12 +123,12 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
                         { loading
                             ? <div className={"loader"}></div>
                             : <>
-                                <div id={style.idDivCategorie} >
+                                <div id={style.idDivCategorie}>
                                     <label htmlFor="category">{adherentName} est dans la catégorie :</label>
                                     <select
                                         id="category"
                                         name="categorie"
-                                        className={style.selectCategorie}
+                                        className={"selectCategorie"}
                                         onChange={handleCategoryChange}
                                         value={selectedCategorie ? selectedCategorie.id : ''}
                                     >
@@ -170,9 +171,7 @@ const FormulaireCotisation = ({ donnees, onSuivant }) => {
                                     </>
                                 )}
 
-                                <button className={"buttonSuivant"} onClick={() => handleClickSuivant(selectedCategorie, paiement)}>
-                                    Suivant
-                                </button>
+                                <ButtonSuivant text={"Suivant"} onClick={() => handleClickSuivant(selectedCategorie, paiement)} />
                             </>
                         }
                     </div>

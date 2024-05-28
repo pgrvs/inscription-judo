@@ -61,26 +61,8 @@
 
   label{
     padding: 0;
+    margin-bottom: 5px;
   }
-}
-
-.selectCategorie{
-  margin-top: 10px;
-  text-align: center;
-  background-color: #d60040;
-  color: colors.$text-clair;
-  font-size: 1.2em;
-  font-weight: 600;
-  font-family: fonts.$fonts;
-  border: 8px solid colors.$rose;
-  border-radius: 15px;
-  padding: 0 12px 0 12px;
-  transition: 200ms;
-}
-
-.selectCategorie:hover{
-  box-shadow: 0 0 4px colors.$ombre;
-  transition: 200ms;
 }
 
 .pastilleOrange{

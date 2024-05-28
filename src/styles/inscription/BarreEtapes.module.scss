@@ -59,3 +59,13 @@
   font-weight: 400;
   transition: 0.5s;
 }
+
+
+@media screen and (max-width: 700px) {
+  .texteEtapeFaite{
+    display: none;
+  }
+  .texteEtapeNonFaite{
+    display: none;
+  }
+}

@@ -1,4 +1,5 @@
 @use "../modules/colors";
+@use "../modules/fonts";
 
 .divResponsable1{
   width: 35%;
@@ -36,7 +37,7 @@
     background-color: colors.$background-sombre;
     color: colors.$text-clair;
     width: 95%;
-    height: 100px;
+    padding: 13px 0;
     border-radius: 25px;
     margin: 4px 0;
     display: flex;
@@ -72,4 +73,21 @@
   }
 }
 
+@media screen and (max-width: 1500px) {
+  .ulResponsables{
+    width: 70vw;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .ulResponsables{
+    width: 80vw;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .ulResponsables{
+    width: 90vw;
+  }
+}
 

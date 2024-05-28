@@ -3,6 +3,7 @@ import {capitalize, validatePhoneNumber, validateEmail, validateCodePostal} from
 import Navigation from '../Navigation'
 import GestionnaireResponsables from "./GestionnaireResponsables"
 import BarreEtapes from "./BarreEtapes"
+import ButtonSuivant from '../ButtonSuivant'
 import Cleave from "cleave.js/react"
 import style from "../../styles/inscription/FormulaireResponsable.module.scss"
 import AjoutAdherent from "../../assets/AjoutAdherent";
@@ -67,6 +68,10 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
             const telephoneIndex = parseInt(name.split('_')[1])
             const numTelephoneSansEspace = value.replace(/ /g, "")
             updatedResponsables[indexResponsableActif].numeroTelephone[telephoneIndex] = numTelephoneSansEspace
+        }
+        else if (name.includes('codePostal')) {
+            const codePostalSansEspace = value.replace(/ /g, "")
+            updatedResponsables[indexResponsableActif].codePostal = codePostalSansEspace
         }
         else if (name.includes('prenom')) {
             updatedResponsables[indexResponsableActif].prenom = capitalize(e.target.value)
@@ -164,8 +169,10 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                         {partieAffichee === 1 && (
                             <>
                                 <h2>{donnees.responsables.length > 1 ? 'Responsables' : 'Responsable'} de {donnees.adherent.prenom} :</h2>
+
                                 <GestionnaireResponsables responsables={responsables} indexResponsbale={formGestionnaireResponsbale}/>
                                 {erreurs.responsable && <span className={"erreur"}>{erreurs.responsable}</span>}
+
                                 <div className={style.buttonResponsable}>
                                     <button className={"buttonNoir"} onClick={ajouterResponsable}>
                                         <AjoutAdherent className={"iconeAjout"} alt="Ajout adherent"/>
@@ -181,14 +188,14 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                             {partieAffichee === 2 && (
                                 <>
                                     <legend>Responsable n°{indexResponsableActif + 1}</legend>
-                                    <label>Nom </label>
+                                    <label>Nom :</label>
                                         <input type="text" name="nom" value={responsableActif.nom} onChange={handleChange}/>
                                         {erreurs.nom && <span className={"erreur"}>{erreurs.nom}</span>}
                                     <label>Prénom :</label>
                                     <input type="text" name="prenom" value={responsableActif.prenom} onChange={handleChange}/>
                                     {erreurs.prenom && <span className={"erreur"}>{erreurs.prenom}</span>}
 
-                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(3)}>Suivant</button>
+                                    <ButtonSuivant text={"Suivant"} onClick={() => afficherPartie(3)} />
                                 </>
                             )}
 
@@ -197,14 +204,26 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                                     <label>Rue :</label>
                                     <input type="text" name="rue" value={responsableActif.rue} onChange={handleChange}/>
                                     {erreurs.rue && <span className={"erreur"}>{erreurs.rue}</span>}
+
                                     <label>Code Postal :</label>
-                                    <input type="text" name="codePostal" value={responsableActif.codePostal} onChange={handleChange}/>
+                                    <Cleave
+                                        placeholder="Entrer le code postal"
+                                        options={{
+                                            blocks: [2, 3],
+                                            delimiter: " ",
+                                        }}
+                                        onChange={handleChange}
+                                        className="form-field"
+                                        name="codePostal"
+                                        value={responsableActif.codePostal}
+                                    />
                                     {erreurs.codePostal && <span className={"erreur"}>{erreurs.codePostal}</span>}
+
                                     <label>Ville :</label>
                                     <input type="text" name="ville" onChange={handleChange} value={responsableActif.ville}/>
                                     {erreurs.ville && <span className={"erreur"}>{erreurs.ville}</span>}
 
-                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(4)}>Suivant</button>
+                                    <ButtonSuivant text={"Suivant"} onClick={() => afficherPartie(4)} />
                                 </>
                             )}
 
@@ -212,7 +231,7 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                                 <>
                                     <label>Téléphone 1 :</label>
                                     <Cleave
-                                        placeholder="09 08 76 54 32"
+                                        placeholder="06 00 00 00 00"
                                         options={{
                                             blocks: [2, 2, 2, 2, 2],
                                             delimiter: " ",
@@ -222,13 +241,11 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                                         name="numeroTelephone_0"
                                         value={responsableActif.numeroTelephone[0]}
                                     />
-                                    {/*<input type="text" name="numeroTelephone_0" value={responsableActif.numeroTelephone[0]}
-                           onChange={handleChange}/>*/}
                                     {erreurs.numeroTelephone1 && <span className={"erreur"}>{erreurs.numeroTelephone1}</span>}
 
                                     <label>Téléphone 2 :</label>
                                     <Cleave
-                                        placeholder="09 08 76 54 32"
+                                        placeholder="06 00 00 00 00"
                                         options={{
                                             blocks: [2, 2, 2, 2, 2],
                                             delimiter: " ",
@@ -238,14 +255,12 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                                         name="numeroTelephone_1"
                                         value={responsableActif.numeroTelephone[1]}
                                     />
-                                    {/*<input type="text" name="numeroTelephone_1" value={responsableActif.numeroTelephone[1]}
-                           onChange={handleChange}/>*/}
                                     {erreurs.numeroTelephone2 && <span className={"erreur"}>{erreurs.numeroTelephone2}</span>}
                                     <label>Adresse email :</label>
-                                    <input type="email" name="adresseEmail" value={responsableActif.adresseEmail} onChange={handleChange}/>
+                                    <input type="email" name="adresseEmail" value={responsableActif.adresseEmail} onChange={handleChange} placeholder={"exemple@email.com"}/>
                                     {erreurs.adresseEmail && <span className={"erreur"}>{erreurs.adresseEmail}</span>}
 
-                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(5)}>Suivant</button>
+                                    <ButtonSuivant text={"Suivant"} onClick={() => afficherPartie(5)} />
                                 </>
                             )}
 
@@ -270,9 +285,7 @@ const FormulaireResponsable = ({ donnees, onSuivant }) => {
                                         <label>Informations sportives</label>
                                     </div>
 
-                                    <button className={"buttonSuivant"} type="button" onClick={() => afficherPartie(1)}>
-                                        Suivant
-                                    </button>
+                                    <ButtonSuivant text={"Suivant"} onClick={() => afficherPartie(1)} />
                                 </>
                             )}
                         </div>
