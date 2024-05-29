@@ -18,6 +18,12 @@
   box-shadow: inset 0 0 18px colors.$ombre;
 }
 
+@media screen and (min-width: 2000px) {
+  .swiperDiv {
+    width: 30vw;
+  }
+}
+
 .messageRecherche{
   color: colors.$text-clair;
   font-size: 1.2em;

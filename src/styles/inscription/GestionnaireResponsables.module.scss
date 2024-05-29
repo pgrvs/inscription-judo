@@ -7,6 +7,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  p{
+    margin: 0 0 5px 0;
+  }
 }
 
 .divResponsable2{
@@ -16,6 +20,10 @@
   flex-direction: column;
   align-items: start;
   justify-content: center;
+
+  p{
+    margin: 0;
+  }
 }
 
 .ulResponsables{
@@ -50,7 +58,6 @@
       font-weight: 500;
     }
     p{
-      margin: 0;
       font-weight: 300;
       text-align: start;
       font-size: 0.95em;
@@ -88,6 +95,13 @@
 @media screen and (max-width: 700px) {
   .ulResponsables{
     width: 90vw;
+  }
+}
+
+
+@media screen and (min-width: 2000px) {
+  .ulResponsables{
+    width: 30vw;
   }
 }
 

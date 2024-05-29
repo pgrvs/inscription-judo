@@ -37,6 +37,8 @@ const FormulaireFin = ({donnees}) => {
         cotisation,
     } = donnees
 
+    let errorSendingEmail = false
+
     const handleHome = async () => {
         setLoading(true)
         let adherentId
@@ -47,7 +49,6 @@ const FormulaireFin = ({donnees}) => {
         } else {
             const response = await updateAdherent(idAdherent, adherent, etatSante, cotisation)
             adherentId = response.id
-            console.log(response)
         }
 
 // --------- Ajout du tag 'adherent'
@@ -81,15 +82,19 @@ const FormulaireFin = ({donnees}) => {
         ]
 
 // --------- Si besoin d'un certificat médial
+        let responseEmail
+
         if (etatSante){
             const emailHtml = render(<EmailCertificatMedical prenom={adherent.prenom} nom={adherent.nom}/>)
-            sendEmail(
+            responseEmail = await sendEmail(
                 adherent.adresseEmail,
                 'Cercle du Judo Vesoul - Cerificat Médical',
                 textEmailCertificatMedical(adherent.prenom, adherent.nom),
                 emailHtml,
                 attachments
             )
+
+            errorSendingEmail = !responseEmail.ok
         }
 
         attachments.push({
@@ -117,20 +122,23 @@ const FormulaireFin = ({donnees}) => {
                 'encoding': 'base64'
             })
 
+            const textEmailMajeurAttestation = "Merci de retourner l'attestation relative à l'état de santé complété et signé, s'il vous plaît."
+
             const emailHtml = render(
                 <EmailInscription
                     prenom={adherent.prenom}
                     nom={adherent.nom}
-                    text={"Merci de retourner l'attestation relatif à l'état de santé complété et signé, s'il vous plais."}
+                    text={textEmailMajeurAttestation}
                 />)
-            sendEmail(
+            responseEmail = await sendEmail(
                 adherent.adresseEmail,
                 'Cercle du Judo Vesoul - Inscription',
-                textEmailInscription(adherent.prenom, adherent.nom, "Merci de retourner l'attestation relatif à l'état de santé complété et signé, s'il vous plais."),
+                textEmailInscription(adherent.prenom, adherent.nom, textEmailMajeurAttestation),
                 emailHtml,
                 attachments
             )
 
+            errorSendingEmail = !responseEmail.ok
         }
 // --------- Email pour l'inscription d'un adherent MINEUR avec attestation de santé
         else if (!etatSante){
@@ -143,43 +151,50 @@ const FormulaireFin = ({donnees}) => {
                 'encoding': 'base64'
             })
 
+            const textEmailMineurAttestation = "Merci de retourner l'attestation relative à l'état de santé complété et signé, s'il vous plaît."
+
             const emailHtml = render(
                 <EmailInscription
                     prenom={adherent.prenom}
                     nom={adherent.nom}
-                    text={"Merci de retourner l'attestation relatif à l'état de santé complété et signé, s'il vous plais."}
+                    text={textEmailMineurAttestation}
                 />)
-            sendEmail(
+            responseEmail = await sendEmail(
                 adherent.adresseEmail,
                 'Cercle du Judo Vesoul - Inscription',
-                textEmailInscription(adherent.prenom, adherent.nom, "Merci de retourner l'attestation relatif à l'état de santé complété et signé, s'il vous plais."),
+                textEmailInscription(adherent.prenom, adherent.nom, textEmailMineurAttestation),
                 emailHtml,
                 attachments
             )
 
+            errorSendingEmail = !responseEmail.ok
         }
 // --------- Email pour l'inscription d'un adherent avec demande du cerificat médical
         else {
+            const textEmailCertificat = "Merci de fournir un certificat médical, s'il vous plaît."
+
             const emailHtml = render(
                 <EmailInscription
                     prenom={adherent.prenom}
                     nom={adherent.nom}
-                    text={"Merci de fournir un certificat médical, s'il vous plais."}
+                    text={textEmailCertificat}
                 />)
-            sendEmail(
+            responseEmail = await sendEmail(
                 adherent.adresseEmail,
                 'Cercle du Judo Vesoul - Inscription',
-                textEmailInscription(adherent.prenom, adherent.nom, "Merci de fournir un certificat médical, s'il vous plais."),
+                textEmailInscription(adherent.prenom, adherent.nom, textEmailCertificat),
                 emailHtml,
                 attachments
             )
+
+            errorSendingEmail = !responseEmail.ok
         }
 
 // --------- Email pour les Responsables
         let info
         let attachmentsResponsable
         if (!isAdherentMajeur){
-            responsables.forEach((responsable) => {
+            for (const responsable of responsables) {
                 info = responsable.informations
                 attachmentsResponsable = []
 
@@ -214,7 +229,7 @@ const FormulaireFin = ({donnees}) => {
                             prenom={adherent.prenom}
                             nom={adherent.nom}
                         />)
-                    sendEmail(
+                    responseEmail = await sendEmail(
                         responsable.adresseEmail,
                         'Cercle du Judo Vesoul - Inscription',
                         textEmailResponsable(adherent.prenom, adherent.nom),
@@ -222,10 +237,16 @@ const FormulaireFin = ({donnees}) => {
                         attachmentsResponsable
                     )
                 }
-            })
+                errorSendingEmail = !responseEmail.ok
+                console.log('errorSendingEmail', !responseEmail.ok, responseEmail)
+            }
         }
 
-        navigate('/')
+        if (errorSendingEmail){
+            navigate('/erreur-email')
+        } else {
+            navigate('/')
+        }
     }
 
     return(

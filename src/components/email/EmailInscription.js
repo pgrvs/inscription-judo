@@ -18,12 +18,11 @@ const EmailInscription = ({nom, prenom, text}) => {
                         <Text style={paragraph}>Bienvenue dans notre club de Judo!</Text>
                         <Text style={paragraph}>Nous sommes ravis de vous avoir avec nous.</Text>
                         <Text style={paragraph}>Votre inscription au nom de {prenom} {nom} a bien été enregistré !</Text>
-                        <br/>
                         <Text style={important}>{text}</Text>
                     <h2>Informations complémentaires:</h2>
                         <h3>Autorisation du droit à l’image</h3>
                             <Text style={paragraph}>
-                                L’ensemble des photos et vidéos sont succeptibles d’être publiées sur nos réseaux sociaux et
+                                L’ensemble des photos et vidéos sont susceptibles d’être publiées sur nos réseaux sociaux et
                                 site internet. Par soucis d’efficacité, merci de signaler auprès du professeur principal votre
                                 opposition à toutes diffusions de votre image ou à celle de votre enfant.
                                 Sans ce signalement préalable, le Cercle du Judo de Vesoul considérera pouvoir en bénéficier de
@@ -33,7 +32,7 @@ const EmailInscription = ({nom, prenom, text}) => {
                             <Text style={paragraph}>
                                 Nous nous devons d’assurer la sécurité et l’intégrité physique de nos adhérents et nous
                                 ne sommes pas en mesure d’évaluer l’état clinique du blessé, en conséquence, le Cercle du Judo
-                                de Vesoul appelera sytématiquement les pompiers en cas d’accident sportif le necessitant.
+                                de Vesoul appellera systématiquement les pompiers en cas d’accident sportif le nécessitant.
                                 Il ne pourra être tenu responsable en cas d’opposition de votre part.
                             </Text>
                             <br/>

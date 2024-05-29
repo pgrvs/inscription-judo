@@ -12,6 +12,7 @@ const sendEmail = async (to, subject, text, html, attachments) => {
     } else {
         console.log('E-mail envoyé avec succès')
     }
+    return response
 }
 
 export {sendEmail}

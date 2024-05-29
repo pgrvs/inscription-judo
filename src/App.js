@@ -3,6 +3,7 @@ import Accueil from "./components/Accueil"
 import GestionnaireFormulairesAdherent from "./components/inscription/GestionnaireFormulairesAdherent"
 import VerificationCertificatsMedicals from "./components/VerificationCertificatsMedicals"
 import PageNotFound from "./components/PageNotFound"
+import ErreurEmail from "./components/ErreurEmail"
 import LogoBlanc from "./assets/LogoBlanc"
 import styleApp from './styles/App.module.scss'
 import './styles/globale.scss'
@@ -18,6 +19,7 @@ const App = () => {
                     <Route path="/" element={<Accueil />} />
                     <Route path="/nouvel-adherent/*" element={<GestionnaireFormulairesAdherent />} />
                     <Route path="/verification-certificats-medicals" element={<VerificationCertificatsMedicals />} />
+                    <Route path="/erreur-email" element={<ErreurEmail />} />
                     <Route path="/*" element={<PageNotFound />} />
                 </Routes>
             </Router>
